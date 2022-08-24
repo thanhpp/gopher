@@ -128,7 +128,7 @@ func (s *StateWatcher) compareAndNotifyState(ctx context.Context, cached, curren
 	}
 	cachedP1CEXOrder := cached.P1CEXOrders[len(cached.P1CEXOrders)-1]
 	currentP1CEXOrder := current.P1CEXOrders[len(current.P1CEXOrders)-1]
-	if cachedP1CEXOrder.FilledBaseAmount != currentP1CEXOrder.FilledBaseAmount {
+	if cachedP1CEXOrder.ID != currentP1CEXOrder.ID {
 		return s.notifyCEXOrder(ctx, current.StateID, 1, &currentP1CEXOrder)
 	}
 
@@ -140,7 +140,7 @@ func (s *StateWatcher) compareAndNotifyState(ctx context.Context, cached, curren
 	}
 	cachedP2CEXOrder := cached.P2CEXOrders[len(cached.P2CEXOrders)-1]
 	currentP2CEXOrder := current.P2CEXOrders[len(current.P2CEXOrders)-1]
-	if cachedP2CEXOrder.FilledBaseAmount != currentP2CEXOrder.FilledBaseAmount {
+	if cachedP2CEXOrder.ID != currentP2CEXOrder.ID {
 		return s.notifyCEXOrder(ctx, current.StateID, 2, &currentP2CEXOrder)
 	}
 
@@ -152,7 +152,7 @@ func (s *StateWatcher) compareAndNotifyState(ctx context.Context, cached, curren
 	}
 	cachedDEXTx := cached.P2DEXTxs[len(cached.P2DEXTxs)-1]
 	currentDEXTx := current.P2DEXTxs[len(current.P2DEXTxs)-1]
-	if cachedDEXTx.Status != currentDEXTx.Status {
+	if cachedDEXTx.TxHash != currentDEXTx.TxHash {
 		return s.notifyDEXTx(ctx, current.StateID, &currentDEXTx)
 	}
 
