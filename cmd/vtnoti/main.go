@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/thanhpp/gopher/internal/vtnoti/service"
+	"github.com/thanhpp/gopher/internal/vtnoti/domain/service"
 	"github.com/thanhpp/gopher/internal/vtnoti/vtclient"
 	"github.com/thanhpp/gopher/pkg/bootstrap"
 	"github.com/thanhpp/gopher/pkg/slackx"

@@ -213,9 +213,18 @@ func (s *StateWatcher) notifyDoneState(ctx context.Context, state *vtclient.Stat
 <@U03LG91301L>
 ID: %s
 P1 Orders: %d
+P1 Filled: %f
+P1 AFP: %f
 P2 Orders: %d
-P2 Tx: %d`,
-		state.StateID, len(state.P1CEXOrders), len(state.P2CEXOrders), len(state.P2DEXTxs))
+P2 CEX Filled: %f
+P2 CEX AFP: %f 
+P2 Txs: %d
+P2 DEX Filled: %f
+P2 DEX AFP: %f`,
+		state.StateID,
+		len(state.P1CEXOrders), state.CalCEXOrderBaseFilled(1), state.CalCEXOrderAFP(1),
+		len(state.P2CEXOrders), state.CalCEXOrderBaseFilled(1), state.CalCEXOrderAFP(2),
+		len(state.P2DEXTxs), state.CalP2DEXBaseFilled(), state.CalP2DEXAFP())
 
 	if err := s.slackClient.SendWebhookMsg(ctx, msg, s.slackWebhook); err != nil {
 		return fmt.Errorf("notify done state: %w", err)

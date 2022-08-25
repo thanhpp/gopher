@@ -2,6 +2,8 @@ package vtclient
 
 import "time"
 
+const txExecuted = "EXECUTED"
+
 type GetStatesResp struct {
 	ResultTemplate
 	Data []StateData `json:"data"`
@@ -25,6 +27,103 @@ type StateData struct {
 	P1CEXOrders           []CEXOrderData `json:"p1_cex_orders,omitempty"`
 	P2CEXOrders           []CEXOrderData `json:"p2_cex_orders,omitempty"`
 	P2DEXTxs              []DexTxData    `json:"p2_dex_txs,omitempty"`
+}
+
+func (d *StateData) CalCEXOrderBaseFilled(part int) float64 {
+	var arr []CEXOrderData
+
+	switch part {
+	case 1:
+		arr = d.P1CEXOrders
+	case 2:
+		arr = d.P2CEXOrders
+	default:
+		return 0
+	}
+
+	baseFilled := 0.0
+	for i := range arr {
+		baseFilled += arr[i].FilledBaseAmount
+	}
+
+	return baseFilled
+}
+
+func (d *StateData) CalCEXOrderAFP(part int) float64 {
+	var arr []CEXOrderData
+
+	switch part {
+	case 1:
+		arr = d.P1CEXOrders
+	case 2:
+		arr = d.P2CEXOrders
+	default:
+		return 0
+	}
+
+	tmp, baseFilled := 0.0, 0.0
+
+	for i := range arr {
+		tmp += arr[i].Price * arr[i].FilledBaseAmount
+		baseFilled += arr[i].FilledBaseAmount
+	}
+
+	if baseFilled == 0 {
+		return 0
+	}
+
+	return tmp / baseFilled
+}
+
+func (d *StateData) CalP2DEXBaseFilled() float64 {
+	filled := 0.0
+
+	if d.Side == "buy" {
+		for i := range d.P2DEXTxs {
+			if d.P2DEXTxs[i].Status == txExecuted {
+				filled += d.P2DEXTxs[i].AmountIn
+			}
+		}
+
+		return filled
+	}
+
+	for i := range d.P2DEXTxs {
+		if d.P2DEXTxs[i].Status == txExecuted {
+			filled += d.P2DEXTxs[i].EstimatedAmountOut
+		}
+	}
+
+	return filled
+}
+
+func (d *StateData) CalP2DEXAFP() float64 {
+	tmp := 0.0
+	filled := 0.0
+
+	if d.Side == "buy" {
+		for i := range d.P2DEXTxs {
+			if d.P2DEXTxs[i].Status == "EXECUTED" {
+				tmp += d.P2DEXTxs[i].Price * d.P2DEXTxs[i].AmountIn
+				filled += d.P2DEXTxs[i].AmountIn
+			}
+		}
+		if filled == 0 {
+			return 0
+		}
+		return tmp / filled
+	}
+
+	for i := range d.P2DEXTxs {
+		if d.P2DEXTxs[i].Status == "EXECUTED" {
+			tmp += d.P2DEXTxs[i].Price * d.P2DEXTxs[i].EstimatedAmountOut
+			filled += d.P2DEXTxs[i].EstimatedAmountOut
+		}
+	}
+	if filled == 0 {
+		return 0
+	}
+	return tmp / filled
 }
 
 type CEXOrderData struct {
