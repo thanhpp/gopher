@@ -24,12 +24,28 @@ func init() {
 	}
 }
 
-func TestGetStates(t *testing.T) {
-	c := vtclient.NewClient(
+func newClientFromENV() *vtclient.Client {
+	return vtclient.NewClient(
 		os.Getenv(virtualTakerBaseURL), os.Getenv(virtualTakerUsername), os.Getenv(virtualTakerPassword))
+}
+
+func TestGetStates(t *testing.T) {
+	c := newClientFromENV()
 
 	states, err := c.GetStates(context.Background(), true, true)
 	require.NoError(t, err)
 
 	t.Logf("got %d states", len(states))
+}
+
+func TestGetState(t *testing.T) {
+	var (
+		c       = newClientFromENV()
+		stateID = "cc3jk8ng0e98jqr2bev0"
+	)
+
+	state, err := c.GetState(context.Background(), stateID)
+	require.NoError(t, err)
+
+	t.Logf("state data: %+v", state)
 }

@@ -60,7 +60,12 @@ func (s *StateWatcher) Start(ctx context.Context) {
 				if states[i].StateID == k {
 					continue
 				}
-				if err := s.notifyDoneState(ctx, &states[i]); err != nil {
+				state, err := s.vtClient.GetState(ctx, k)
+				if err != nil {
+					log.Println("[SKIP ERROR]", err)
+					continue
+				}
+				if err := s.notifyDoneState(ctx, &state); err != nil {
 					log.Println("[SKIP ERROR]", err)
 					continue
 				}

@@ -34,6 +34,18 @@ func (c *Client) GetStates(ctx context.Context, isDone, isFilled bool) ([]StateD
 	return resp.Data, nil
 }
 
+func (c *Client) GetState(ctx context.Context, stateID string) (StateData, error) {
+	url := fmt.Sprintf("%s/state/%s", c.baseURL, stateID)
+
+	resp := new(GetStateResp)
+
+	if err := c.doGet(ctx, url, resp); err != nil {
+		return StateData{}, fmt.Errorf("GetState - %w", err)
+	}
+
+	return resp.Data.StateData, nil
+}
+
 func (c *Client) doGet(ctx context.Context, url string, respExpected interface{}) error {
 	httpReq, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
