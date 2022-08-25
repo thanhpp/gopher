@@ -56,10 +56,14 @@ func (s *StateWatcher) Start(ctx context.Context) {
 		}
 
 		for k := range s.statesCache {
+			isFound := false
 			for i := range states {
 				if states[i].StateID == k {
-					continue
+					isFound = true
+					break
 				}
+			}
+			if !isFound {
 				state, err := s.vtClient.GetState(ctx, k)
 				if err != nil {
 					log.Println("[SKIP ERROR]", err)
