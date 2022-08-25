@@ -60,6 +60,10 @@ func (s *StateWatcher) Start(ctx context.Context) {
 				if states[i].StateID == k {
 					continue
 				}
+				if err := s.notifyDoneState(ctx, &states[i]); err != nil {
+					log.Println("[SKIP ERROR]", err)
+					continue
+				}
 				delete(s.statesCache, k)
 			}
 		}
@@ -96,27 +100,6 @@ P2 DEX Txs: %d
 
 	if err := s.slackClient.SendWebhookMsg(ctx, msg, s.slackWebhook); err != nil {
 		return fmt.Errorf("notify new state error: %w", err)
-	}
-
-	if len(state.P1CEXOrders) == 0 {
-		return nil
-	}
-	if err := s.notifyCEXOrder(ctx, state.StateID, 1, &state.P1CEXOrders[len(state.P1CEXOrders)-1]); err != nil {
-		return err
-	}
-
-	if len(state.P2CEXOrders) == 0 {
-		return nil
-	}
-	if err := s.notifyCEXOrder(ctx, state.StateID, 2, &state.P2CEXOrders[len(state.P2CEXOrders)-1]); err != nil {
-		return err
-	}
-
-	if len(state.P2DEXTxs) == 0 {
-		return nil
-	}
-	if err := s.notifyDEXTx(ctx, state.StateID, &state.P2DEXTxs[len(state.P2DEXTxs)-1]); err != nil {
-		return err
 	}
 
 	return nil
@@ -166,22 +149,17 @@ func (s *StateWatcher) compareAndNotifyCEXOrder(
 	cachedP1CEXOrder := cachedList[len(cachedList)-1]
 	currentP1CEXOrder := currentList[len(currentList)-1]
 	if cachedP1CEXOrder.ID == currentP1CEXOrder.ID {
-		if cachedP1CEXOrder.Status != currentP1CEXOrder.Status { // latest cex order updated
+		if cachedP1CEXOrder.FilledBaseAmount != currentP1CEXOrder.FilledBaseAmount { // latest cex order updated
 			return s.notifyCEXOrder(ctx, stateID, part, &currentP1CEXOrder)
 		}
 		return nil
 	}
 
-	// there is a new cex order => notify latest cex order & second to latest
-	if len(currentList) > 1 {
-		if err := s.notifyCEXOrder(
-			ctx, stateID, part, &currentList[len(currentList)-2],
-		); err != nil {
-			return err
-		}
+	if currentP1CEXOrder.FilledBaseAmount != 0 {
+		return s.notifyCEXOrder(ctx, stateID, part, &currentP1CEXOrder)
 	}
 
-	return s.notifyCEXOrder(ctx, stateID, part, &currentP1CEXOrder)
+	return nil
 }
 
 func (s *StateWatcher) notifyCEXOrder(
@@ -216,6 +194,22 @@ Status: %s`,
 
 	if err := s.slackClient.SendWebhookMsg(ctx, msg, s.slackWebhook); err != nil {
 		return fmt.Errorf("notify dex tx error: %w", err)
+	}
+
+	return nil
+}
+
+func (s *StateWatcher) notifyDoneState(ctx context.Context, state *vtclient.StateData) error {
+	msg := fmt.Sprintf(`> STATE DONE
+<@U03LG91301L>
+ID: %s
+P1 Orders: %d
+P2 Orders: %d
+P2 Tx: %d`,
+		state.StateID, len(state.P1CEXOrders), len(state.P2CEXOrders), len(state.P2DEXTxs))
+
+	if err := s.slackClient.SendWebhookMsg(ctx, msg, s.slackWebhook); err != nil {
+		return fmt.Errorf("notify done state: %w", err)
 	}
 
 	return nil
