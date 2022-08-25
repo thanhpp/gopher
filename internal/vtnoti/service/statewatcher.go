@@ -48,6 +48,7 @@ func (s *StateWatcher) Start(ctx context.Context) {
 		log.Println("[DEBUG] get states", len(states))
 
 		for i := range states {
+			log.Printf("[DEBUG] state %s. P1 CEX Order: %d", states[i].StateID, len(states[i].P1CEXOrders))
 			if err := s.checkAndNotifyState(ctx, &states[i]); err != nil {
 				log.Println("[SKIP ERROR]", err)
 				continue
@@ -76,6 +77,8 @@ func (s *StateWatcher) checkAndNotifyState(ctx context.Context, state *vtclient.
 		return nil
 	}
 
+	log.Printf("[DEBUG] cached P1 CEX orders: %d. current P1 CEX orders %d",
+		len(cached.P1CEXOrders), len(state.P1CEXOrders))
 	if err := s.compareAndNotifyState(ctx, cached, state); err != nil {
 		return err
 	}
@@ -120,28 +123,12 @@ P2 DEX Txs: %d
 }
 
 func (s *StateWatcher) compareAndNotifyState(ctx context.Context, cached, current *vtclient.StateData) error {
-	if len(current.P1CEXOrders) == 0 {
-		return nil
-	}
-	if len(cached.P1CEXOrders) == 0 {
-		return s.notifyCEXOrder(ctx, current.StateID, 1, &current.P1CEXOrders[len(current.P1CEXOrders)-1])
-	}
-	cachedP1CEXOrder := cached.P1CEXOrders[len(cached.P1CEXOrders)-1]
-	currentP1CEXOrder := current.P1CEXOrders[len(current.P1CEXOrders)-1]
-	if cachedP1CEXOrder.ID != currentP1CEXOrder.ID {
-		return s.notifyCEXOrder(ctx, current.StateID, 1, &currentP1CEXOrder)
+	if err := s.compareAndNotifyCEXOrder(ctx, current.StateID, 1, cached.P1CEXOrders, current.P1CEXOrders); err != nil {
+		return err
 	}
 
-	if len(current.P2CEXOrders) == 0 {
-		return nil
-	}
-	if len(cached.P2CEXOrders) == 0 {
-		return s.notifyCEXOrder(ctx, current.StateID, 2, &current.P2CEXOrders[len(current.P2CEXOrders)-1])
-	}
-	cachedP2CEXOrder := cached.P2CEXOrders[len(cached.P2CEXOrders)-1]
-	currentP2CEXOrder := current.P2CEXOrders[len(current.P2CEXOrders)-1]
-	if cachedP2CEXOrder.ID != currentP2CEXOrder.ID {
-		return s.notifyCEXOrder(ctx, current.StateID, 2, &currentP2CEXOrder)
+	if err := s.compareAndNotifyCEXOrder(ctx, current.StateID, 2, cached.P2CEXOrders, current.P2CEXOrders); err != nil {
+		return err
 	}
 
 	if len(current.P2DEXTxs) == 0 {
@@ -153,10 +140,48 @@ func (s *StateWatcher) compareAndNotifyState(ctx context.Context, cached, curren
 	cachedDEXTx := cached.P2DEXTxs[len(cached.P2DEXTxs)-1]
 	currentDEXTx := current.P2DEXTxs[len(current.P2DEXTxs)-1]
 	if cachedDEXTx.TxHash != currentDEXTx.TxHash {
+		if len(current.P2DEXTxs) > 1 {
+			if err := s.notifyDEXTx(
+				ctx, current.StateID, &current.P2DEXTxs[len(current.P2DEXTxs)-2],
+			); err != nil {
+				return err
+			}
+		}
 		return s.notifyDEXTx(ctx, current.StateID, &currentDEXTx)
 	}
 
 	return nil
+}
+
+func (s *StateWatcher) compareAndNotifyCEXOrder(
+	ctx context.Context, stateID string, part int, cachedList, currentList []vtclient.CEXOrderData,
+) error {
+	if len(currentList) == 0 {
+		return nil
+	}
+	if len(cachedList) == 0 { // first CEX order
+		return s.notifyCEXOrder(ctx, stateID, part, &currentList[len(currentList)-1])
+	}
+
+	cachedP1CEXOrder := cachedList[len(cachedList)-1]
+	currentP1CEXOrder := currentList[len(currentList)-1]
+	if cachedP1CEXOrder.ID == currentP1CEXOrder.ID {
+		if cachedP1CEXOrder.Status != currentP1CEXOrder.Status { // latest cex order updated
+			return s.notifyCEXOrder(ctx, stateID, part, &currentP1CEXOrder)
+		}
+		return nil
+	}
+
+	// there is a new cex order => notify latest cex order & second to latest
+	if len(currentList) > 1 {
+		if err := s.notifyCEXOrder(
+			ctx, stateID, part, &currentList[len(currentList)-2],
+		); err != nil {
+			return err
+		}
+	}
+
+	return s.notifyCEXOrder(ctx, stateID, part, &currentP1CEXOrder)
 }
 
 func (s *StateWatcher) notifyCEXOrder(
@@ -169,10 +194,11 @@ ID: %s
 Status: %s
 Side: %s
 Symbol: %s/%s
+Price: %f
 Base amount: %f
 Filled base amount: %f`,
 		stateID, part, order.ID, order.Status, order.Side, order.BaseSymbol, order.QuoteSymbol,
-		order.BaseAmount, order.FilledBaseAmount)
+		order.Price, order.BaseAmount, order.FilledBaseAmount)
 
 	if err := s.slackClient.SendWebhookMsg(ctx, msg, s.slackWebhook); err != nil {
 		return fmt.Errorf("notify cex order error: %w", err)

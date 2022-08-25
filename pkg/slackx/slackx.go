@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 )
 
@@ -48,8 +47,6 @@ func (r *RestClient) SendWebhookMsg(ctx context.Context, msg, webhookURL string)
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("send webhook msg not status OK, status: %d, resp: %s", resp.StatusCode, byteResp)
 	}
-
-	log.Printf("[DEBUG] response %s", byteResp)
 
 	return nil
 }
