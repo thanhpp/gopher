@@ -132,13 +132,6 @@ func (s *StateWatcher) compareAndNotifyState(ctx context.Context, cached, curren
 	cachedDEXTx := cached.P2DEXTxs[len(cached.P2DEXTxs)-1]
 	currentDEXTx := current.P2DEXTxs[len(current.P2DEXTxs)-1]
 	if cachedDEXTx.TxHash != currentDEXTx.TxHash {
-		if len(current.P2DEXTxs) > 1 {
-			if err := s.notifyDEXTx(
-				ctx, current.StateID, &current.P2DEXTxs[len(current.P2DEXTxs)-2],
-			); err != nil {
-				return err
-			}
-		}
 		return s.notifyDEXTx(ctx, current.StateID, &currentDEXTx)
 	}
 
@@ -199,7 +192,7 @@ func (s *StateWatcher) notifyDEXTx(ctx context.Context, stateID string, dexTx *v
 State ID: %s
 Tx hash: %s
 Status: %s`,
-		stateID, dexTx.TxHash, dexTx.TxHash)
+		stateID, dexTx.TxHash, dexTx.Status)
 
 	if err := s.slackClient.SendWebhookMsg(ctx, msg, s.slackWebhook); err != nil {
 		return fmt.Errorf("notify dex tx error: %w", err)
@@ -218,7 +211,7 @@ P1 AFP: %f
 P2 Orders: %d
 P2 CEX Filled: %f
 P2 CEX AFP: %f 
-P2 Txs: %d
+P2 Txsode: %d
 P2 DEX Filled: %f
 P2 DEX AFP: %f`,
 		state.StateID,

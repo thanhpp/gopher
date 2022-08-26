@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 
@@ -29,14 +30,23 @@ func main() {
 		log.Fatal("[FATAL] load env files", err)
 	}
 
+	slackClient := slackx.NewRestClient()
+
 	stateWatcher := service.NewStateWatcher(
 		os.Getenv(alertVirtualTakerWebhook),
 		vtclient.NewClient(
 			os.Getenv(virtualTakerBaseURL), os.Getenv(virtualTakerUsername), os.Getenv(virtualTakerPassword),
 		),
-		slackx.NewRestClient(),
+		slackClient,
 	)
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	if err := slackClient.SendWebhookMsg(
+		ctx, fmt.Sprintf("> Vtnoti started\nVersion: %s\nDesc: %s", version, desc),
+		os.Getenv(alertVirtualTakerWebhook)); err != nil {
+		log.Fatal("[FATAL] send slack start message error", err)
+	}
 
 	go stateWatcher.Start(ctx)
 
