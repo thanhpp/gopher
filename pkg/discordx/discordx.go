@@ -56,7 +56,7 @@ func (r *RestClient) CreateContentOnlyMessage(channelID, content string) error {
 		return err
 	}
 
-	log.Printf("[DEBUG] %d %s", httpResp.StatusCode, byteResp)
+	log.Printf("[DEBUG] CreateContentOnlyMessage url: %s, code: %d, msg: %s", url, httpResp.StatusCode, byteResp)
 
 	return nil
 }

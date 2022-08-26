@@ -46,11 +46,14 @@ func (w *Crawler) GetHanoiInfo() (*WeatherInfo, error) {
 
 	// #wrapper > div > div.uk-container > section > div > div > article > div > div >
 	// div.content-news.fix-content-news > div > div > div:nth-child(2) > div
-	collector.OnHTML("div.content-news.fix-content-news > div > div > div:nth-child(2) > div", func(h *colly.HTMLElement) {
-		if err := h.Unmarshal(infoNow); err != nil {
-			return
-		}
-	})
+	collector.OnHTML(
+		"div.content-news.fix-content-news > div > div > div:nth-child(2) > div",
+		func(h *colly.HTMLElement) {
+			if err := h.Unmarshal(infoNow); err != nil {
+				return
+			}
+		},
+	)
 	if err := collector.Visit(hanoiWeather); err != nil {
 		return nil, err
 	}
