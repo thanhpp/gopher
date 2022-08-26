@@ -45,7 +45,7 @@ func main() {
 	if err := slackClient.SendWebhookMsg(
 		ctx, fmt.Sprintf("> Vtnoti started\nVersion: %s\nDesc: %s", version, desc),
 		os.Getenv(alertVirtualTakerWebhook)); err != nil {
-		log.Fatal("[FATAL] send slack start message error", err)
+		log.Fatal("[FATAL] send slack start message error", err) // nolint: gocritic
 	}
 
 	go stateWatcher.Start(ctx)

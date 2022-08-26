@@ -61,15 +61,15 @@ func (r *RestClient) CreateContentOnlyMessage(channelID, content string) error {
 	return nil
 }
 
-func (c *RestClient) addAuth(httpReq *http.Request) {
+func (r *RestClient) addAuth(httpReq *http.Request) {
 	if httpReq == nil {
 		return
 	}
 
-	httpReq.Header.Set("Authorization", fmt.Sprintf("Bot %s", c.token))
+	httpReq.Header.Set("Authorization", fmt.Sprintf("Bot %s", r.token))
 }
 
-func (c *RestClient) addContentTypeJSON(httpReq *http.Request) {
+func (r *RestClient) addContentTypeJSON(httpReq *http.Request) {
 	if httpReq == nil {
 		return
 	}
