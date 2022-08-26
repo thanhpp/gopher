@@ -205,16 +205,17 @@ func (s *StateWatcher) notifyDoneState(ctx context.Context, state *vtclient.Stat
 	msg := fmt.Sprintf(`> STATE DONE
 <@U03LG91301L>
 ID: %s
+Side: %s
 P1 Orders: %d
 P1 Filled: %f
 P1 AFP: %f
 P2 Orders: %d
 P2 CEX Filled: %f
 P2 CEX AFP: %f 
-P2 Txsode: %d
+P2 Txs: %d
 P2 DEX Filled: %f
 P2 DEX AFP: %f`,
-		state.StateID,
+		state.StateID, state.Side,
 		len(state.P1CEXOrders), state.CalCEXOrderBaseFilled(1), state.CalCEXOrderAFP(1),
 		len(state.P2CEXOrders), state.CalCEXOrderBaseFilled(1), state.CalCEXOrderAFP(2),
 		len(state.P2DEXTxs), state.CalP2DEXBaseFilled(), state.CalP2DEXAFP())
