@@ -3,11 +3,11 @@ package service
 import (
 	"fmt"
 	"log"
-	"sync"
 	"time"
 
 	"github.com/thanhpp/gopher/pkg/crawlers/weathervn"
 	"github.com/thanhpp/gopher/pkg/discordx"
+	"github.com/thanhpp/gopher/pkg/scheduler"
 )
 
 var (
@@ -21,22 +21,26 @@ type HanoiAlert struct {
 	discordWeatherChannel string
 
 	// should send
-	lock     sync.RWMutex
-	nextSent time.Time
+	sched *scheduler.HourScheduler
 }
 
 func NewHanoiAlert(weatherC *weathervn.Crawler, discordC *discordx.RestClient, discordChan string) *HanoiAlert {
+	sched, err := scheduler.NewHourScheduler(6, 8, 12, 18)
+	if err != nil {
+		panic(err)
+	}
+
 	return &HanoiAlert{
 		weatherC:              weatherC,
 		discordC:              discordC,
 		discordWeatherChannel: discordChan,
+		sched:                 sched,
 	}
 }
 
 func (a *HanoiAlert) Start() {
 	var (
-		t            = time.NewTicker(fetchInterval)
-		lastSentHour int
+		t = time.NewTicker(fetchInterval)
 	)
 
 	defer t.Stop()
@@ -50,7 +54,7 @@ func (a *HanoiAlert) Start() {
 
 		now := time.Now()
 
-		if h := now.Hour() % 6; h != 0 || (h == 0 && h == lastSentHour) {
+		if !a.sched.ShouldTrigger(now) {
 			continue
 		}
 
@@ -62,7 +66,7 @@ func (a *HanoiAlert) Start() {
 			continue
 		}
 
-		lastSentHour = now.Hour()
+		a.sched.SetTriggered()
 	}
 }
 
