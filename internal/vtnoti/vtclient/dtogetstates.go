@@ -61,10 +61,10 @@ func (d *StateData) CalCEXOrderAFP(part int) float64 {
 		return 0
 	}
 
-	tmp, baseFilled := 0.0, 0.0
+	quoteFilled, baseFilled := 0.0, 0.0
 
 	for i := range arr {
-		tmp += arr[i].Price * arr[i].FilledBaseAmount
+		quoteFilled += arr[i].FilledQuoteAmount
 		baseFilled += arr[i].FilledBaseAmount
 	}
 
@@ -72,7 +72,7 @@ func (d *StateData) CalCEXOrderAFP(part int) float64 {
 		return 0
 	}
 
-	return tmp / baseFilled
+	return quoteFilled / baseFilled
 }
 
 func (d *StateData) CalP2DEXBaseFilled() float64 {
