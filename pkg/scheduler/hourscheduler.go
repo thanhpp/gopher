@@ -10,9 +10,9 @@ import (
 
 // It will try to trigger once (success) in a defined hour list in a day.
 type HourScheduler struct {
-	hourList      []int
-	rangeStartIdx int
-	rangeEndIdx   int
+	hourList          []int
+	nextRangeStartIdx int
+	nextRangeEndIdx   int
 }
 
 // NewHourScheduler have a bug when len(hours) == 1.
@@ -42,9 +42,9 @@ func NewHourScheduler(hours ...int) (*HourScheduler, error) {
 	}
 
 	return &HourScheduler{
-		hourList:      hours,
-		rangeStartIdx: -1,
-		rangeEndIdx:   -1,
+		hourList:          hours,
+		nextRangeStartIdx: -1,
+		nextRangeEndIdx:   -1,
 	}, nil
 }
 
@@ -52,31 +52,31 @@ func (s *HourScheduler) ShouldTrigger(t time.Time) bool {
 	h := t.Hour()
 
 	// find appropriate range
-	if s.rangeStartIdx == -1 {
+	if s.nextRangeStartIdx == -1 {
 		for i := 0; i < len(s.hourList)-1; i++ {
 			if h >= s.hourList[i] && h < s.hourList[i+1] {
-				s.rangeStartIdx = i
-				s.rangeEndIdx = (i + 1) % len(s.hourList)
+				s.nextRangeStartIdx = i + 1
+				s.nextRangeEndIdx = (s.nextRangeStartIdx + 1) % len(s.hourList)
 
 				return true
 			}
 		}
 
-		s.rangeStartIdx = len(s.hourList) - 1
-		s.rangeEndIdx = 0
+		s.nextRangeStartIdx = len(s.hourList) - 1
+		s.nextRangeEndIdx = 0
 
 		return true
 	}
 
-	if s.hourList[s.rangeStartIdx] < s.hourList[s.rangeEndIdx] {
-		if h >= s.hourList[s.rangeStartIdx] && h < s.hourList[s.rangeEndIdx] {
+	if s.hourList[s.nextRangeStartIdx] < s.hourList[s.nextRangeEndIdx] {
+		if h >= s.hourList[s.nextRangeStartIdx] && h < s.hourList[s.nextRangeEndIdx] {
 			return true
 		}
 
 		return false
 	}
 
-	if h >= s.hourList[s.rangeStartIdx] || h < s.hourList[s.rangeEndIdx] {
+	if h >= s.hourList[s.nextRangeStartIdx] || h < s.hourList[s.nextRangeEndIdx] {
 		return true
 	}
 
@@ -84,8 +84,8 @@ func (s *HourScheduler) ShouldTrigger(t time.Time) bool {
 }
 
 func (s *HourScheduler) SetTriggered() {
-	s.rangeStartIdx = (s.rangeStartIdx + 1) % len(s.hourList)
-	s.rangeEndIdx = (s.rangeEndIdx + 1) % len(s.hourList)
+	s.nextRangeStartIdx = (s.nextRangeStartIdx + 1) % len(s.hourList)
+	s.nextRangeEndIdx = (s.nextRangeEndIdx + 1) % len(s.hourList)
 }
 
 func (s *HourScheduler) Debug() {
