@@ -1,6 +1,7 @@
 package weathervn
 
 import (
+	"errors"
 	"strings"
 
 	"github.com/gocolly/colly/v2"
@@ -38,6 +39,10 @@ func (wi *WeatherInfo) IsRaining() bool {
 	return strings.Contains(strings.ToLower(wi.Status), "có mưa")
 }
 
+func (wi *WeatherInfo) IsEmpty() bool {
+	return len(wi.Status) == 0
+}
+
 func (w *Crawler) GetHanoiInfo() (*WeatherInfo, error) {
 	var (
 		collector = colly.NewCollector()
@@ -59,6 +64,10 @@ func (w *Crawler) GetHanoiInfo() (*WeatherInfo, error) {
 	}
 
 	infoNow.Beautify()
+
+	if infoNow.IsEmpty() {
+		return nil, errors.New("empty hanoi weather info")
+	}
 
 	return infoNow, nil
 }

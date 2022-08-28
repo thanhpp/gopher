@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 )
 
@@ -56,7 +55,9 @@ func (r *RestClient) CreateContentOnlyMessage(channelID, content string) error {
 		return err
 	}
 
-	log.Printf("[DEBUG] CreateContentOnlyMessage url: %s, code: %d, msg: %s", url, httpResp.StatusCode, byteResp)
+	if httpResp.StatusCode != http.StatusOK {
+		return fmt.Errorf("discord client - create message not OK. Code: %d, message %s", httpResp.StatusCode, byteResp)
+	}
 
 	return nil
 }
