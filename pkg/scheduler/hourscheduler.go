@@ -52,10 +52,12 @@ func (s *HourScheduler) ShouldTrigger(t time.Time) bool {
 	h := t.Hour()
 
 	// find appropriate range
+	// the first range is the current range, because after ShouldTrigger == true. The set trigger will move it to the
+	// next range.
 	if s.nextRangeStartIdx == -1 {
 		for i := 0; i < len(s.hourList)-1; i++ {
 			if h >= s.hourList[i] && h < s.hourList[i+1] {
-				s.nextRangeStartIdx = i + 1
+				s.nextRangeStartIdx = i
 				s.nextRangeEndIdx = (s.nextRangeStartIdx + 1) % len(s.hourList)
 
 				return true

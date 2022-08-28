@@ -54,6 +54,7 @@ func (a *HanoiAlert) Start() {
 
 		now := time.Now()
 
+		a.sched.Debug()
 		if !a.sched.ShouldTrigger(now) {
 			continue
 		}

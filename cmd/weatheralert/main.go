@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/joho/godotenv"
 	"github.com/thanhpp/gopher/internal/weatheralert/domain/service"
@@ -12,6 +13,13 @@ import (
 )
 
 func main() {
+	timeLoc, err := time.LoadLocation("Asia/Ho_Chi_Minh")
+	if err != nil {
+		log.Printf("load time location error: %v", err)
+		return
+	}
+	time.Local = timeLoc
+
 	discordC, discordMeta, err := setupDiscordClient()
 	if err != nil {
 		log.Printf("error: %v", err)
