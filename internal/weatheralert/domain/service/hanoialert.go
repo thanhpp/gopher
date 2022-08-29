@@ -11,7 +11,6 @@ import (
 )
 
 var (
-	triggerHour   = []int{0, 6, 12, 18}
 	fetchInterval = time.Minute
 )
 

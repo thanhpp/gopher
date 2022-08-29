@@ -33,7 +33,7 @@ func main() {
 
 const (
 	discordEnvFile   = "../../secrets/discord.env"
-	discordToken     = "DISCORD_BOT_TOKEN"
+	discordToken     = "DISCORD_BOT_TOKEN" // nolint: gosec
 	discordWeatherID = "DISCORD_BOT_WEATHER_CHANNEL_ID"
 )
 
