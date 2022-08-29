@@ -47,6 +47,10 @@ func (c *Client) GetState(ctx context.Context, stateID string) (StateData, error
 }
 
 func (c *Client) doGet(ctx context.Context, url string, respExpected interface{}) error {
+	if respExpected == nil {
+		return fmt.Errorf("do get - nil resp expected")
+	}
+
 	httpReq, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return fmt.Errorf("doGet - new request error: %w", err)
