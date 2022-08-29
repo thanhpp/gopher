@@ -40,7 +40,7 @@ func (r *RestClient) Client() *ethclient.Client {
 func (r *RestClient) GetReceiptByTxHash(ctx context.Context, txHash string) (*types.Receipt, error) {
 	receipt, err := r.ethC.TransactionReceipt(ctx, common.HexToHash(txHash))
 	if err != nil {
-		return nil, fmt.Errorf("get tx receipt error: %w", err)
+		return nil, fmt.Errorf("get tx receipt error: %w, txHash: %s", err, txHash)
 	}
 
 	return receipt, nil
