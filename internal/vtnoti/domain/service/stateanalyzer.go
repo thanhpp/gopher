@@ -45,32 +45,40 @@ func (a *StateAnalyzer) ExportSummary(ctx context.Context) ([]StateSummary, erro
 	)
 
 	for _, s := range states {
-		p1BaseFilled, p1QuoteFilled := a.summarizeCEXOrders(s.P1CEXOrders)
-		p2BaseFilled, p2QuoteFilled := a.summarizeCEXOrders(s.P2CEXOrders)
-		p2DEXSummary, err := a.summarizePart2DEX(ctx, s.P2DEXTxs)
+		stateSummary, err := a.SummarizeState(ctx, s)
 		if err != nil {
 			return nil, err
 		}
 		summaries = append(
 			summaries,
-			StateSummary{
-				StateID:     s.StateID,
-				CreatedTime: s.CreatedTime,
-				P1Side:      s.Side,
-				Part1: Part1Summary{
-					P1OrderBaseFilled:  p1BaseFilled,
-					P1OrderQuoteFilled: p1QuoteFilled,
-				},
-				Part2CEX: Part2CEXSummary{
-					P2OrderBaseFilled:  p2BaseFilled,
-					P2OrderQuoteFilled: p2QuoteFilled,
-				},
-				Part2DEX: p2DEXSummary,
-			},
+			stateSummary,
 		)
 	}
 
 	return summaries, nil
+}
+
+func (a *StateAnalyzer) SummarizeState(ctx context.Context, s vtclient.StateData) (StateSummary, error) {
+	p1BaseFilled, p1QuoteFilled := a.summarizeCEXOrders(s.P1CEXOrders)
+	p2BaseFilled, p2QuoteFilled := a.summarizeCEXOrders(s.P2CEXOrders)
+	p2DEXSummary, err := a.summarizePart2DEX(ctx, s.P2DEXTxs)
+	if err != nil {
+		return StateSummary{}, err
+	}
+	return StateSummary{
+		StateID:     s.StateID,
+		CreatedTime: s.CreatedTime,
+		P1Side:      s.Side,
+		Part1: Part1Summary{
+			P1OrderBaseFilled:  p1BaseFilled,
+			P1OrderQuoteFilled: p1QuoteFilled,
+		},
+		Part2CEX: Part2CEXSummary{
+			P2OrderBaseFilled:  p2BaseFilled,
+			P2OrderQuoteFilled: p2QuoteFilled,
+		},
+		Part2DEX: p2DEXSummary,
+	}, nil
 }
 
 func (a *StateAnalyzer) getDoneStatesSortedByTime(ctx context.Context) ([]vtclient.StateData, error) {
