@@ -8,6 +8,7 @@ require (
 	github.com/gocolly/colly/v2 v2.1.0
 	github.com/joho/godotenv v1.4.0
 	github.com/stretchr/testify v1.8.0
+	go.uber.org/zap v1.23.0
 )
 
 require (
@@ -36,6 +37,8 @@ require (
 	github.com/temoto/robotstxt v1.1.1 // indirect
 	github.com/tklauser/go-sysconf v0.3.5 // indirect
 	github.com/tklauser/numcpus v0.2.2 // indirect
+	go.uber.org/atomic v1.7.0 // indirect
+	go.uber.org/multierr v1.6.0 // indirect
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
 	golang.org/x/net v0.0.0-20220607020251-c690dde0001d // indirect
 	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a // indirect
