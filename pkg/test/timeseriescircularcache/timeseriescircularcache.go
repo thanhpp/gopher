@@ -2,6 +2,7 @@ package timeseriescircularcache
 
 import (
 	"errors"
+	"log"
 	"time"
 )
 
@@ -75,7 +76,7 @@ func (c *cacheImpl) Insert(timestamp time.Time, data interface{}) {
 		Ts:  timestamp,
 		Dat: data,
 	})
-	// log.Println("[DEBUG] inserted to slot", slotIdx, "value", data, "timestamp", timestamp)
+	log.Println("[DEBUG] inserted to slot", slotIdx, "value", data, "timestamp", timestamp)
 }
 
 func (c *cacheImpl) Get(from, to time.Time) ([]TimeSeriesCacheValue, error) {
@@ -117,6 +118,7 @@ func (c *cacheImpl) RemoveBefore(timestamp time.Time) {
 		return
 	}
 
+	log.Println("[DEBUG] RemoveBefore", "start", c.startIdx)
 	skip := true
 	idx := c.startIdx
 	for i := 0; ; i++ {
@@ -134,10 +136,20 @@ func (c *cacheImpl) RemoveBefore(timestamp time.Time) {
 		c.startIdx = idx
 		c.startMinTime = c.startMinTime.Add((time.Duration(i) * c.slotTimeSize))
 	}
+	log.Println("[DEBUG] RemoveBefore", "start", c.startIdx)
 }
 
 func (c *cacheImpl) getSlotIdx(timestamp time.Time) int64 {
 	i64Dur := timestamp.UnixNano() - c.startMinTime.UnixNano()
 
 	return (i64Dur / c.slotTimeSize.Nanoseconds()) % int64(len(c.values))
+}
+
+func (c *cacheImpl) Size() int {
+	var size int
+	for i := range c.values {
+		size += len(c.values[i])
+	}
+
+	return size
 }
