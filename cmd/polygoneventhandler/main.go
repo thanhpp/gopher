@@ -4,7 +4,9 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"math/big"
 	"os"
+	"time"
 
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/common"
@@ -74,6 +76,7 @@ func setZap() {
 func startSub(ctx context.Context, ethClient *ethclient.Client) error {
 	query := ethereum.FilterQuery{
 		Addresses: []common.Address{nscAddress},
+		FromBlock: big.NewInt(28308500),
 	}
 	logsC := make(chan types.Log)
 
@@ -81,6 +84,8 @@ func startSub(ctx context.Context, ethClient *ethclient.Client) error {
 	if err != nil {
 		return fmt.Errorf("ethClient.SubscribeFilterLogs error: %w", err)
 	}
+
+	time.Sleep(time.Minute)
 
 	handleSubcription(sub, logsC)
 
@@ -101,7 +106,7 @@ func handleSubcription(sub ethereum.Subscription, logsC chan types.Log) {
 
 func handleLogs(lg types.Log) {
 	if len(lg.Topics) == 0 {
-		log.Printf("[DEBUG] empty topic logs - %+v", lg)
+		log.Printf("[DEBUG] empty topic logs - %+v\n", lg)
 		return
 	}
 
@@ -112,7 +117,7 @@ func handleLogs(lg types.Log) {
 			log.Println("[DEBUG] Parse Transfer err", err, "log", lg)
 			return
 		}
-		log.Printf("[DEBUG] transfer info: %+v", transferInfo)
+		log.Printf("[DEBUG] transfer info: %+v\n", transferInfo)
 
 	case approvalKeccak256:
 		approvalInfo, err := smInstance.ParseApproval(lg)
@@ -120,7 +125,7 @@ func handleLogs(lg types.Log) {
 			log.Println("[DEBUG] Parse Approval err", err, "log", lg)
 			return
 		}
-		log.Printf("[DEBUG] Approvel info: %+v", approvalInfo)
+		log.Printf("[DEBUG] Approvel info: %+v\n", approvalInfo)
 
 	default:
 		log.Println("unsupported topic", lg.Topics[0], lg)
