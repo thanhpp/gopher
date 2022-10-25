@@ -47,10 +47,21 @@ func main() {
 		log.Fatal("smartcontracts.NewSmartcontracts error", err)
 	}
 
-	if err := startSub(context.Background(), ethClient); err != nil {
-		log.Fatalf("startSub error: %v", err)
-		return
+	// if err := startSub(context.Background(), ethClient); err != nil {
+	// 	log.Fatalf("startSub error: %v", err)
+	// 	return
+	// }
+
+	logs, err := ethClient.FilterLogs(context.Background(), ethereum.FilterQuery{
+		Addresses: []common.Address{common.HexToAddress("0x0000000000000000000000000000000000001010")},
+		FromBlock: big.NewInt(28790257),
+		ToBlock:   big.NewInt(28790258),
+	})
+	if err != nil {
+		log.Fatalf("FilterLogs error: %+v", err)
 	}
+
+	log.Printf("logs: %+v\n", len(logs))
 }
 
 func loadEnv() {

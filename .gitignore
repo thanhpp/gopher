@@ -21,3 +21,4 @@ secrets/*
 
 # secrets
 *.env
+cmd/polygoneventhandler/polygoneventhandler
