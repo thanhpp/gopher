@@ -22,3 +22,4 @@ secrets/*
 # secrets
 *.env
 cmd/polygoneventhandler/polygoneventhandler
+cmd/kyberswapbench/kyberswapbench
