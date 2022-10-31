@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"log"
 	"math/big"
 	"net/http"
@@ -16,9 +17,9 @@ import (
 
 func main() {
 	var (
-		min   = 600
-		max   = 1_000
-		step  = 200
+		min   = 100
+		max   = 400
+		step  = 50
 		wg    sync.WaitGroup
 		m     = make(map[int64]*KyberSwapResp)
 		mlock sync.Mutex
@@ -56,14 +57,15 @@ func main() {
 			bestAmount int64
 			bestPrice  float64
 		)
-		for k, v := range m {
+		for k := min; k <= max; k += step {
+			v := m[int64(k)]
 			in, _ := new(big.Int).SetString(v.InputAmount, 10)
 			out, _ := new(big.Int).SetString(v.OutputAmount, 10)
-			price := TokenAmountToFloat(out, 18) / TokenAmountToFloat(in, 18)
+			price := TokenAmountToFloat(out, 6) / TokenAmountToFloat(in, 18) * (1 - v.GasUsd/v.AmountOutUsd)
 			f.WriteString(fmt.Sprintf("%d: %f\tgasUsd: %f\n", k, price, v.GasUsd))
 
 			if price > bestPrice {
-				bestAmount = k
+				bestAmount = int64(k)
 				bestPrice = price
 			}
 		}
@@ -74,7 +76,7 @@ func main() {
 }
 
 func getKSRate(amount int64) (*KyberSwapResp, error) {
-	url := fmt.Sprintf("https://aggregator-api.kyberswap.com/bsc/route/encode?tokenIn=0xfe56d5892BDffC7BF58f2E84BE1b2C32D21C308b&tokenOut=0x55d398326f99059fF775485246999027B3197955&amountIn=%s&to=0x000000000000000000000000000000000000dEaD", IntToTokenAmount(amount, 18).String()) // nolint: lll
+	url := fmt.Sprintf("https://aggregator-api.kyberswap.com/ethereum/route/encode?tokenIn=0xdeFA4e8a7bcBA345F687a2f1456F5Edd9CE97202&tokenOut=0xdAC17F958D2ee523a2206206994597C13D831ec7&amountIn=%s&to=0x000000000000000000000000000000000000dEaD", IntToTokenAmount(amount, 18).String()) // nolint: lll
 	log.Printf("[DEBUG] %s\n", url)
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
@@ -91,11 +93,16 @@ func getKSRate(amount int64) (*KyberSwapResp, error) {
 	}
 	defer resp.Body.Close()
 
+	data, _ := io.ReadAll(resp.Body)
 	ksResp := new(KyberSwapResp)
 
-	if err := json.NewDecoder(resp.Body).Decode(ksResp); err != nil {
+	log.Println(string(data))
+
+	if err := json.Unmarshal(data, ksResp); err != nil {
 		return nil, err
 	}
+
+	log.Println(ksResp)
 
 	return ksResp, nil
 }
