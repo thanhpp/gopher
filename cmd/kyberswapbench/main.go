@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"math"
 	"math/big"
 	"net/http"
 	"os"
@@ -17,9 +18,9 @@ import (
 
 func main() {
 	var (
-		min   = 100
-		max   = 400
-		step  = 50
+		min   = 400
+		max   = 2_000
+		step  = 200
 		wg    sync.WaitGroup
 		m     = make(map[int64]*KyberSwapResp)
 		mlock sync.Mutex
@@ -54,29 +55,39 @@ func main() {
 
 		log.Printf("comparing price\n")
 		var (
-			bestAmount int64
-			bestPrice  float64
+			bestAmount     int64
+			bestPrice      float64
+			bestDiffAmount int64
+			bestDiff       float64 = math.MaxFloat64
 		)
 		for k := min; k <= max; k += step {
 			v := m[int64(k)]
 			in, _ := new(big.Int).SetString(v.InputAmount, 10)
 			out, _ := new(big.Int).SetString(v.OutputAmount, 10)
-			price := TokenAmountToFloat(out, 6) / TokenAmountToFloat(in, 18) * (1 - v.GasUsd/v.AmountOutUsd)
-			f.WriteString(fmt.Sprintf("%d: %f\tgasUsd: %f\n", k, price, v.GasUsd))
+			price := TokenAmountToFloat(out, 18) / TokenAmountToFloat(in, 18) * (1 - v.GasUsd/v.AmountOutUsd)
+			diff := 0.001 + 0.002 + v.GasUsd/v.AmountOutUsd
+			f.WriteString(fmt.Sprintf("%d: %f\tgasUsd: %f\t diff: %f\n", k, price, v.GasUsd, diff))
 
 			if price > bestPrice {
 				bestAmount = int64(k)
 				bestPrice = price
 			}
+
+			if diff < bestDiff {
+				bestDiff = diff
+				bestDiffAmount = int64(k)
+			}
 		}
 
 		log.Printf("writing to file\n")
 		f.WriteString(fmt.Sprintf("BEST: %d: %f\n\n", bestAmount, bestPrice))
+		f.WriteString(fmt.Sprintf("BEST DIFF: %d: %f\n\n", bestDiffAmount, bestDiff))
 	}
 }
 
 func getKSRate(amount int64) (*KyberSwapResp, error) {
-	url := fmt.Sprintf("https://aggregator-api.kyberswap.com/ethereum/route/encode?tokenIn=0xdeFA4e8a7bcBA345F687a2f1456F5Edd9CE97202&tokenOut=0xdAC17F958D2ee523a2206206994597C13D831ec7&amountIn=%s&to=0x000000000000000000000000000000000000dEaD", IntToTokenAmount(amount, 18).String()) // nolint: lll
+	// url := fmt.Sprintf("https://aggregator-api.kyberswap.com/ethereum/route/encode?tokenIn=0xdeFA4e8a7bcBA345F687a2f1456F5Edd9CE97202&tokenOut=0xdAC17F958D2ee523a2206206994597C13D831ec7&amountIn=%s&to=0x000000000000000000000000000000000000dEaD", IntToTokenAmount(amount, 18).String()) // nolint: lll
+	url := fmt.Sprintf("https://aggregator-api.kyberswap.com/bsc/route/encode?tokenIn=0xfe56d5892BDffC7BF58f2E84BE1b2C32D21C308b&tokenOut=0x55d398326f99059fF775485246999027B3197955&amountIn=%s&to=0x000000000000000000000000000000000000dEaD", IntToTokenAmount(amount, 18).String()) // nolint: lll
 	log.Printf("[DEBUG] %s\n", url)
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
