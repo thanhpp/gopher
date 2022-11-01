@@ -16,11 +16,11 @@ import (
 
 // https://docs.kyberswap.com/Aggregator/aggregator-api
 
-func main() {
+func main() { // nolint
 	var (
 		min   = 400
 		max   = 2_000
-		step  = 200
+		step  = 50
 		wg    sync.WaitGroup
 		m     = make(map[int64]*KyberSwapResp)
 		mlock sync.Mutex
@@ -66,7 +66,7 @@ func main() {
 			out, _ := new(big.Int).SetString(v.OutputAmount, 10)
 			price := TokenAmountToFloat(out, 18) / TokenAmountToFloat(in, 18) * (1 - v.GasUsd/v.AmountOutUsd)
 			diff := 0.001 + 0.002 + v.GasUsd/v.AmountOutUsd
-			f.WriteString(fmt.Sprintf("%d: %f\tgasUsd: %f\t diff: %f\n", k, price, v.GasUsd, diff))
+			// f.WriteString(fmt.Sprintf("%d: %f\tgasUsd: %f\t diff: %f\n", k, price, v.GasUsd, diff))
 
 			if price > bestPrice {
 				bestAmount = int64(k)
@@ -100,6 +100,7 @@ func getKSRate(amount int64) (*KyberSwapResp, error) {
 	}
 
 	if resp.StatusCode != http.StatusOK {
+		log.Printf("%+v", resp.Header)
 		return nil, errors.New("not 200")
 	}
 	defer resp.Body.Close()
