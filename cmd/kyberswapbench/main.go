@@ -10,17 +10,26 @@ import (
 	"math/big"
 	"net/http"
 	"os"
+	"sort"
 	"sync"
 	"time"
 )
 
 // https://docs.kyberswap.com/Aggregator/aggregator-api
 
+type Info struct {
+	Amount     float64
+	PriceWoGas float64
+	PriceWGas  float64
+	Gas        float64
+	Diff       float64
+}
+
 func main() { // nolint
 	var (
-		min   = 400
-		max   = 2_000
-		step  = 50
+		min   = 1_500
+		max   = 3_000
+		step  = 250
 		wg    sync.WaitGroup
 		m     = make(map[int64]*KyberSwapResp)
 		mlock sync.Mutex
@@ -32,10 +41,11 @@ func main() { // nolint
 	}
 	defer f.Close()
 
-	ticker := time.NewTicker(time.Second * 3)
+	ticker := time.NewTicker(time.Minute)
 	defer ticker.Stop()
 
 	for ; true; <-ticker.C {
+		f.WriteString("---------------\n")
 		for i := min; i <= max; i += step {
 			wg.Add(1)
 			go func(amount int64) {
@@ -59,18 +69,28 @@ func main() { // nolint
 			bestPrice      float64
 			bestDiffAmount int64
 			bestDiff       float64 = math.MaxFloat64
+			info                   = make([]Info, 0, len(m))
 		)
 		for k := min; k <= max; k += step {
 			v := m[int64(k)]
 			in, _ := new(big.Int).SetString(v.InputAmount, 10)
 			out, _ := new(big.Int).SetString(v.OutputAmount, 10)
-			price := TokenAmountToFloat(out, 18) / TokenAmountToFloat(in, 18) * (1 - v.GasUsd/v.AmountOutUsd)
+			priceWoGas := TokenAmountToFloat(out, 18) / TokenAmountToFloat(in, 18)
+			priceWGas := priceWoGas * (1 - v.GasUsd/v.AmountOutUsd)
 			diff := 0.001 + 0.002 + v.GasUsd/v.AmountOutUsd
 			// f.WriteString(fmt.Sprintf("%d: %f\tgasUsd: %f\t diff: %f\n", k, price, v.GasUsd, diff))
 
-			if price > bestPrice {
+			info = append(info, Info{
+				Amount:     float64(k),
+				PriceWGas:  priceWGas,
+				PriceWoGas: priceWoGas,
+				Diff:       diff,
+				Gas:        v.GasUsd,
+			})
+
+			if priceWGas > bestPrice {
 				bestAmount = int64(k)
-				bestPrice = price
+				bestPrice = priceWGas
 			}
 
 			if diff < bestDiff {
@@ -80,7 +100,15 @@ func main() { // nolint
 		}
 
 		log.Printf("writing to file\n")
-		f.WriteString(fmt.Sprintf("BEST: %d: %f\n\n", bestAmount, bestPrice))
+		sort.Slice(info, func(i, j int) bool {
+			return info[i].PriceWGas < info[j].PriceWGas
+		})
+		for i := range info {
+			f.WriteString(fmt.Sprintf("Amount: %5.5f, PriceWGas: %5.5f, PriceWoGas: %5.5f, Diff: %5.5f, Gas: %5.5f\n",
+				info[i].Amount, info[i].PriceWGas, info[i].PriceWoGas, info[i].Diff, info[i].Gas))
+		}
+
+		f.WriteString(fmt.Sprintf("BEST: %d: %f\n", bestAmount, bestPrice))
 		f.WriteString(fmt.Sprintf("BEST DIFF: %d: %f\n\n", bestDiffAmount, bestDiff))
 	}
 }
