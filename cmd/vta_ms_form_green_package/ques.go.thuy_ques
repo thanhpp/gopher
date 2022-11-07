@@ -16,23 +16,23 @@ var (
 		Questions: []string{
 			"r04f8a63450614a439783eee1d64fcd8e",
 			"r1acd5486eaba4640812695314c8ddb50",
-			"r282e11efca4746699b77b2a97877337e",
-			"r4caefb532498457eae9bdc147533935b",
-			"r54dbbad30f684d0fbae9c944b07701c5",
 			"r9056b52a98d64550b4efca6ef6a850e0",
-			"r9ddef0a0dbaf40cfba7fb639f820d377",
+			"r54dbbad30f684d0fbae9c944b07701c5",
 			"rc20fc8e50fd04464af9367e88df79e85",
+			"r282e11efca4746699b77b2a97877337e",
 			"rc2efd2b723f543cdb80e604ec5caa597",
+			"r9ddef0a0dbaf40cfba7fb639f820d377",
 			"rece97f3a671447f4b795293b533e76b4",
+			"r4caefb532498457eae9bdc147533935b",
 		},
 		Answers: []Ans{
 			{1, "1af6d609-de0e-4a44-8760-bc6b87f48a10"},
 			{2, "1d70d21c-934e-47b5-9d52-e593942de6e3"},
-			{3, "86897558-7fb7-40c9-9add-107b230b6473"},
-			{4, "3b52502e-1070-4412-af70-744f544cc8f5"},
-			{5, "7f68b283-0cd7-49f3-a827-fb4b982f23c2"},
-			{6, "e51337b2-28d9-4e39-bfcc-eff66163b9e7"},
-			{7, "f3925523-16a6-4697-b707-7c40df45a670"},
+			{4, "86897558-7fb7-40c9-9add-107b230b6473"},
+			{5, "3b52502e-1070-4412-af70-744f544cc8f5"},
+			{6, "7f68b283-0cd7-49f3-a827-fb4b982f23c2"},
+			{9, "e51337b2-28d9-4e39-bfcc-eff66163b9e7"},
+			{10, "f3925523-16a6-4697-b707-7c40df45a670"},
 		},
 	}
 
@@ -60,13 +60,13 @@ var (
 
 	q3 = QuesGroup{
 		Questions: []string{
-			"r6090b752758a44f08ea8edc5cd83089a",
 			"r89ca726b97504cd79434726227b11c01",
+			"rbbe81ab5579f43e499d31f5ccad24b39",
+			"rebfc2d78bf40457386fa5e7d0778565d",
+			"r6090b752758a44f08ea8edc5cd83089a",
 			"r979bd382cb9e43a18ee27852b1a3d6db",
 			"ra883a11e27224ecaa8d6ec4981aaf533",
-			"rbbe81ab5579f43e499d31f5ccad24b39",
 			"rd096d60cddad4b4da5fed238d689769c",
-			"rebfc2d78bf40457386fa5e7d0778565d",
 		},
 		Answers: []Ans{
 			{1, "8c7e2bce-da6b-42d9-bd8a-618780af863d"},
@@ -88,7 +88,7 @@ type QuesMul struct {
 var (
 	quesMul = QuesMul{
 		Id:  "raaccbea3b3e449b3bc42cdd356c1f98d",
-		Ans: []string{"Tự nhiên", "Hóa học"},
+		Ans: []string{"Tự nhiên", "Hóa học", "Công nghệ", "Tự nhiên", "Hóa học", "Công nghệ"},
 	}
 )
 
