@@ -5,6 +5,7 @@ go 1.18
 require (
 	github.com/ethereum/go-ethereum v1.10.23
 	github.com/gin-gonic/gin v1.8.1
+	github.com/goccy/go-json v0.9.7
 	github.com/gocolly/colly v1.2.0
 	github.com/gocolly/colly/v2 v2.1.0
 	github.com/joho/godotenv v1.4.0
@@ -30,7 +31,6 @@ require (
 	github.com/go-playground/validator/v10 v10.10.0 // indirect
 	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
-	github.com/goccy/go-json v0.9.7 // indirect
 	github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/uuid v1.2.0 // indirect
