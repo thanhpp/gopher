@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/thanhpp/gopher/internal/vtnoti/vtclient"
@@ -178,7 +179,7 @@ Price: %f
 Base amount: %f
 Filled base amount: %f`,
 		stateID, part, order.ID, order.Status, order.Side, order.BaseSymbol, order.QuoteSymbol,
-		order.Price, order.BaseAmount, order.FilledBaseAmount)
+		order.ActualPrice, order.BaseAmount, order.FilledBaseAmount)
 
 	if err := s.slackClient.SendWebhookMsg(ctx, msg, s.slackWebhook); err != nil {
 		return fmt.Errorf("notify cex order error: %w", err)
@@ -206,23 +207,40 @@ func (s *StateWatcher) notifyDoneState(ctx context.Context, state *vtclient.Stat
 <@U03LG91301L>
 ID: %s
 Side: %s
+
 P1 Orders: %d
 P1 Filled: %f
 P1 AFP: %f
+
 P2 Orders: %d
 P2 CEX Filled: %f
 P2 CEX AFP: %f 
+
 P2 Txs: %d
 P2 DEX Filled: %f
-P2 DEX AFP: %f`,
+P2 DEX AFP: %f
+
+%s`,
 		state.StateID, state.Side,
 		len(state.P1CEXOrders), state.CalCEXOrderBaseFilled(1), state.CalCEXOrderAFP(1),
 		len(state.P2CEXOrders), state.CalCEXOrderBaseFilled(2), state.CalCEXOrderAFP(2),
-		len(state.P2DEXTxs), state.CalP2DEXBaseFilled(), state.CalP2DEXAFP())
+		len(state.P2DEXTxs), state.CalP2DEXBaseFilled(), state.CalP2DEXAFP(),
+		stringtifyMap("Asset change with fee", state.AssetChangeWithFee))
 
 	if err := s.slackClient.SendWebhookMsg(ctx, msg, s.slackWebhook); err != nil {
 		return fmt.Errorf("notify done state: %w", err)
 	}
 
 	return nil
+}
+
+func stringtifyMap[K comparable, V any](name string, in map[K]V) string {
+	strB := new(strings.Builder)
+	strB.WriteString(name + "\n")
+	for k, v := range in {
+		strB.WriteString(fmt.Sprintf("  - %v: %v\n", k, v))
+	}
+	strB.WriteString("\n")
+
+	return strB.String()
 }

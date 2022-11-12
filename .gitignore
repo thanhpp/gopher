@@ -15,6 +15,7 @@
 # vendor/
 
 secrets/*
+secrets
 
 # Generate files
 *.csv
@@ -25,3 +26,5 @@ cmd/polygoneventhandler/polygoneventhandler
 cmd/kyberswapbench/kyberswapbench
 cmd/kyberswapbench/2022-11-01 12:08:18.732911828 +0700 +07 m=+0.000230391.txt
 cmd/vta_ms_form_green_package/vta_ms_form_green_package
+.gitignore
+cmd/vtnoti/vtnoti
