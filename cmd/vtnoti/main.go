@@ -53,13 +53,27 @@ func main() {
 	bootstrap.WaitTerminateSignals()
 }
 
+func configFilesArgs() (vtEnv, slackEnv string) {
+	args := os.Args
+	if len(os.Args) != 3 {
+		return vtClientEnvFile, slackEnvFile
+	}
+
+	return args[1], args[2]
+}
+
 func loadEnvFiles() error {
-	if err := godotenv.Load(vtClientEnvFile); err != nil {
+	vtEnv, slackEnv := configFilesArgs()
+
+	if err := godotenv.Load(vtEnv); err != nil {
 		return err
 	}
-	if err := godotenv.Load(slackEnvFile); err != nil {
+	log.Println("loaded:", vtEnv)
+
+	if err := godotenv.Load(slackEnv); err != nil {
 		return err
 	}
+	log.Println("loaded", slackEnv)
 
 	return nil
 }
