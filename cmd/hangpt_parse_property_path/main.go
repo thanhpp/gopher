@@ -2,11 +2,61 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
+	"log"
 	"strconv"
 	"strings"
 )
 
+func main() {
+	const path = "/property/project/project_locations/[1]/geo_location/[1]"
+
+	elems := strings.Split(path, "/")
+	elems = elems[1:] // remove empty
+
+	var (
+		obj any = "Hanoi"
+	)
+
+	for i := len(elems) - 1; i >= 0; i-- {
+		if strings.Contains(elems[i], "[") {
+			strIdx := strings.ReplaceAll(strings.ReplaceAll(elems[i], "[", ""), "]", "")
+			idx, err := strconv.Atoi(strIdx)
+			if err != nil {
+				panic(err)
+			}
+			tmp := make([]any, idx+1)
+			tmp[idx] = obj
+			obj = tmp
+			continue
+		}
+		tmp := make(map[string]any)
+		tmp[elems[i]] = obj
+		obj = tmp
+	}
+
+	data, _ := json.MarshalIndent(obj, "", "    ")
+	log.Printf("\n%s\n", string(data))
+
+	/*
+		{
+			"property": {
+				"project": {
+					"project_locations": [
+						null,
+						{
+							"geo_location": [
+								null,
+								"Hanoi"
+							]
+						}
+					]
+				}
+			}
+		}
+	*/
+}
+
+/*
 func main() {
 	const path = "property/project/project_locations/[0]/geo_location/[0]"
 	var jsonResp = `
@@ -60,7 +110,7 @@ func main() {
 
 	fmt.Println(temp)
 }
-
+*/
 /*
 paths[0] = property
 paths[1] = project
