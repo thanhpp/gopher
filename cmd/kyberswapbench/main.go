@@ -27,9 +27,9 @@ type Info struct {
 
 func main() { // nolint
 	var (
-		min   = 1_500
-		max   = 3_000
-		step  = 250
+		min   = 100
+		max   = 200
+		step  = 20
 		wg    sync.WaitGroup
 		m     = make(map[int64]*KyberSwapResp)
 		mlock sync.Mutex
@@ -101,7 +101,7 @@ func main() { // nolint
 
 		log.Printf("writing to file\n")
 		sort.Slice(info, func(i, j int) bool {
-			return info[i].PriceWGas < info[j].PriceWGas
+			return info[i].Amount < info[j].Amount
 		})
 		for i := range info {
 			f.WriteString(fmt.Sprintf("Amount: %5.5f, PriceWGas: %5.5f, PriceWoGas: %5.5f, Diff: %5.5f, Gas: %5.5f\n",
@@ -114,8 +114,11 @@ func main() { // nolint
 }
 
 func getKSRate(amount int64) (*KyberSwapResp, error) {
-	// url := fmt.Sprintf("https://aggregator-api.kyberswap.com/ethereum/route/encode?tokenIn=0xdeFA4e8a7bcBA345F687a2f1456F5Edd9CE97202&tokenOut=0xdAC17F958D2ee523a2206206994597C13D831ec7&amountIn=%s&to=0x000000000000000000000000000000000000dEaD", IntToTokenAmount(amount, 18).String()) // nolint: lll
-	url := fmt.Sprintf("https://aggregator-api.kyberswap.com/bsc/route/encode?tokenIn=0xfe56d5892BDffC7BF58f2E84BE1b2C32D21C308b&tokenOut=0x55d398326f99059fF775485246999027B3197955&amountIn=%s&to=0x000000000000000000000000000000000000dEaD", IntToTokenAmount(amount, 18).String()) // nolint: lll
+	// LINK: 	BSC		0xf8a0bf9cf54bb92f17374d9e9a321e6a111a51bd 	|
+	// KNC: 	BSC		0xfe56d5892BDffC7BF58f2E84BE1b2C32D21C308b	|
+	// USDT: 	BSC		0x55d398326f99059fF775485246999027B3197955	|
+	// url := fmt.Sprintf("https://aggregator-api.kyberswap.com/ethereum/route/encode?tokenIn=0xdeFA4e8a7bcBA345F687a2f1456F5Edd9CE97202&tokenOut=0xdAC17F958D2ee523a2206206994597C13D831ec7&amountIn=%s&to=0x000000000000000000000000000000000000dEaD", IntToTokenAmount(amount, 18).String())
+	url := fmt.Sprintf("https://aggregator-api.kyberswap.com/bsc/route/encode?tokenIn=0xf8a0bf9cf54bb92f17374d9e9a321e6a111a51bd&tokenOut=0x55d398326f99059fF775485246999027B3197955&amountIn=%s&to=0x000000000000000000000000000000000000dEaD", IntToTokenAmount(amount, 18).String())
 	log.Printf("[DEBUG] %s\n", url)
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
