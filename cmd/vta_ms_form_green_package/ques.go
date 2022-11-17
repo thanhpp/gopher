@@ -11,122 +11,84 @@ type QuesGroup struct {
 }
 
 var (
-	qChoice = []QuesGroup{q1, q3, q4, q5, q6, q7}
+	qChoice = []QuesGroup{q1, q2, q3}
 	q1      = QuesGroup{
 		Questions: []string{
-			"rb906468d6d5c493993e7c909c5c404e2",
-			"r9c0ce440bec342609c023c9f28d2dc0f",
-			"r7e1f495b4bf548b999c34478050e1e45",
-			"r8ff21380b92d467d9a4dd4f1ed59bddf",
+			"r04f8a63450614a439783eee1d64fcd8e",
+			"r1acd5486eaba4640812695314c8ddb50",
+			"r282e11efca4746699b77b2a97877337e",
+			"r4caefb532498457eae9bdc147533935b",
+			"r54dbbad30f684d0fbae9c944b07701c5",
+			"r9056b52a98d64550b4efca6ef6a850e0",
+			"r9ddef0a0dbaf40cfba7fb639f820d377",
+			"rc20fc8e50fd04464af9367e88df79e85",
+			"rc2efd2b723f543cdb80e604ec5caa597",
+			"rece97f3a671447f4b795293b533e76b4",
 		},
 		Answers: []Ans{
-			{1, "65ac90a1-1931-4a46-b6c9-2f2acc16fc8a"},
-			{2, "d810d0d7-eca5-4583-987b-3d4c1da72996"},
-			{3, "97707f9e-ce3d-4328-be58-08b5e23294d3"},
-			{4, "ca86cfd0-5724-4b2e-885a-0b2a9e5165ab"},
-			{5, "b8bab2ef-b67d-496d-af8c-6075b9642548"},
-			{6, "b8e5c5b5-afad-4e00-8168-23d43ebf38d4"},
-			{7, "4a2270ba-65ef-4518-b618-1b62a42f748c"},
+			{1, "1af6d609-de0e-4a44-8760-bc6b87f48a10"},
+			{2, "1d70d21c-934e-47b5-9d52-e593942de6e3"},
+			{3, "86897558-7fb7-40c9-9add-107b230b6473"},
+			{4, "3b52502e-1070-4412-af70-744f544cc8f5"},
+			{5, "7f68b283-0cd7-49f3-a827-fb4b982f23c2"},
+			{6, "e51337b2-28d9-4e39-bfcc-eff66163b9e7"},
+			{7, "f3925523-16a6-4697-b707-7c40df45a670"},
+		},
+	}
+
+	q2 = QuesGroup{
+		Questions: []string{
+			"rde79c7395b4e46eb84605b658ac698f6",
+			"r0dc878569da646d781fe630bf8071f85",
+			"rd352b222501f4c0391ddf89a630e05eb",
+			"ra98e685c3af44904b5389c64a16e4913",
+			"r968bebf2a04247a6bfa910a16d9a4aa8",
+			"re1718eb4321d4e76baecd4e894a21e22",
+			"rf5a143b617fa4b2cb4fe222b92a3cd3d",
+			"r20db2bf8cc6a4027bdda06a667bfddb7",
+		},
+		Answers: []Ans{
+			{1, "a0f3757a-2390-43a4-8411-0e0086188714"},
+			{2, "871bb7d8-b45c-48e2-a1a6-fa984f347a06"},
+			{3, "f3323ccd-3911-40f8-a1e7-5cfd5ce1fca2"},
+			{4, "c87a56c7-f200-4331-8d97-40818eb60747"},
+			{5, "441201e0-0427-4e54-bb59-5c7676256132"},
+			{6, "2009cff6-e7c3-4cae-9569-caf57d9417d8"},
+			{7, "66670ac7-c3e6-45c9-8ae2-45a1a8dc727a"},
 		},
 	}
 
 	q3 = QuesGroup{
 		Questions: []string{
-			"r40a95e2904804766b543da0ab9a3ef30",
-			"r09ed9f7550e54b198426dacd72d83d42",
-			"rb4fd1e63ea054333b9370a6053ba0058",
-			"r88ca2040ca484689a750a840a6021d3a",
+			"r6090b752758a44f08ea8edc5cd83089a",
+			"r89ca726b97504cd79434726227b11c01",
+			"r979bd382cb9e43a18ee27852b1a3d6db",
+			"ra883a11e27224ecaa8d6ec4981aaf533",
+			"rbbe81ab5579f43e499d31f5ccad24b39",
+			"rd096d60cddad4b4da5fed238d689769c",
+			"rebfc2d78bf40457386fa5e7d0778565d",
 		},
 		Answers: []Ans{
-			{1, "65ac90a1-1931-4a46-b6c9-2f2acc16fc8a"},
-			{2, "d810d0d7-eca5-4583-987b-3d4c1da72996"},
-			{3, "97707f9e-ce3d-4328-be58-08b5e23294d3"},
-			{4, "ca86cfd0-5724-4b2e-885a-0b2a9e5165ab"},
-			{5, "b8bab2ef-b67d-496d-af8c-6075b9642548"},
-			{6, "b8e5c5b5-afad-4e00-8168-23d43ebf38d4"},
-			{7, "4a2270ba-65ef-4518-b618-1b62a42f748c"},
+			{1, "8c7e2bce-da6b-42d9-bd8a-618780af863d"},
+			{2, "14a42472-bfe5-4309-bbd2-5553de86d868"},
+			{3, "522bdb6d-b154-477a-9626-9be7aa401436"},
+			{4, "4e91e9a7-bf0a-4626-8c96-0ac2d7fe14ba"},
+			{5, "c61c0522-3444-4acd-ab69-d6378906ad23"},
+			{6, "14949038-49d5-4d4d-8b9e-40ceecedefe5"},
+			{7, "fa47408f-f7ed-45f3-8963-7f2efc1b559a"},
 		},
 	}
+)
 
-	q4 = QuesGroup{
-		Questions: []string{
-			"r2fad0b4bf008408aa033ad02d9e13ee2",
-			"reac54be4b6cc4293ade67aee6a70c785",
-			"r6055ef45dbe8492cbe19f67d3474a696",
-		},
-		Answers: []Ans{
-			{1, "65ac90a1-1931-4a46-b6c9-2f2acc16fc8a"},
-			{2, "d810d0d7-eca5-4583-987b-3d4c1da72996"},
-			{3, "97707f9e-ce3d-4328-be58-08b5e23294d3"},
-			{4, "ca86cfd0-5724-4b2e-885a-0b2a9e5165ab"},
-			{5, "b8bab2ef-b67d-496d-af8c-6075b9642548"},
-			{6, "b8e5c5b5-afad-4e00-8168-23d43ebf38d4"},
-			{7, "4a2270ba-65ef-4518-b618-1b62a42f748c"},
-		},
-	}
+type QuesMul struct {
+	Id  string
+	Ans []string
+}
 
-	q5 = QuesGroup{
-		Questions: []string{
-			"rce5d2fd6841b4c8a8152c1efd149db25",
-			"r997122a017cf4c9ebd1aa337ff903f0f",
-			"r8e9364c75b8e419fa4a4324dbd887b9b",
-			"r5956259036554904b9f8bf7adf391d50",
-			"ra52c083cd2964c19857d4fde5c9bd586",
-			"ra6153b5d21bf4b5b8a9c54ec96a1ad63",
-			"r83f55c9279c848f0965ec2d89a277951",
-			"r929c7424dfd14018bc188f5aec092280",
-		},
-		Answers: []Ans{
-			{1, "cad8e26d-b8c6-40cc-b950-cf5a9e966d69"},
-			{3, "803b010d-bf17-4f98-a602-3ab627a2cb84"},
-			{4, "f3a3797f-4b7f-4a70-acd0-555132039239"},
-			{5, "029e39cd-fe1d-4ec2-bb38-c5cca114fd4c"},
-			{6, "a42184c7-4e69-442b-9745-42b18f81296b"},
-			{7, "3be74e44-4c5a-43bf-811d-c0a3f0d66364"},
-			{8, "5220be51-9db2-43c5-b272-ffb14d240a15"},
-		},
-	}
-
-	q6 = QuesGroup{
-		Questions: []string{
-			"rb0874f69324a44d0ac11ed67e68a0a11",
-			"r1d5afe61e9c94adb8ba27336dd9bb5b8",
-			"r169a11e02ea546f69c36c1a5317eafed",
-			"rc915909ee07647afb1dc0749f5108837",
-			"r1b8e52083bdf404a9a4e51360f184837",
-			"rab4f505929614cb68ea9438dbc41c9f0",
-			"rd2a76bfef1a1456baed3d6875ed8ec90",
-		},
-		Answers: []Ans{
-			{1, "c9cab424-4118-4f52-b45c-d97dfd8ae80f"},
-			{2, "0c904836-bfd9-468a-ade9-e5d3f034dae3"},
-			{3, "1a130efe-37e9-45c2-8ceb-6d00969a9286"},
-			{4, "a1557f49-5f38-47ee-adf2-2310657e0a3b"},
-			{6, "0744ed42-c3fc-458b-8ceb-cba100b52cb8"},
-			{7, "e643beb0-e0fb-4b18-afe6-39eeed076bcb"},
-			{8, "b2097a15-2436-4adc-a662-9ca543f4fedb"},
-		},
-	}
-
-	q7 = QuesGroup{
-		Questions: []string{
-			"r9302cc913d334977ac000bb62146fd05",
-			"r3e0d7da13f4e431ca79994dccaf2b703",
-			"rfebd13a157064719bc092f614fc3f002",
-			"r204d4119244c4a8e8537d8054801a3d9",
-			"r14ce9d334e8843878156c93ba6225f24",
-			"r179924712d314511891f33123f0b520e",
-			"r6e27fafe69434f06a2c9680d61fd1ecc",
-		},
-		Answers: []Ans{
-			{1, "3f7600dc-27e2-4bc3-8b99-5d8dd502c77d"},
-			{2, "8cc9e633-ae7e-4528-9018-dc85a171745a"},
-			{3, "37fb862a-cfea-4656-ad1d-f2111563a043"},
-			{4, "516c32c0-da1d-471d-bccc-04b4cdc43dad"},
-			{5, "50332f36-ef3d-40d6-b873-6355d01188a9"},
-			{6, "74905a95-971e-415a-bf2a-19e9f7206bc0"},
-			{7, "80f44d45-1283-4b1b-9472-e3fe516c1fb2"},
-		},
+var (
+	quesMul = QuesMul{
+		Id:  "raaccbea3b3e449b3bc42cdd356c1f98d",
+		Ans: []string{"Tự nhiên", "Hóa học"},
 	}
 )
 
@@ -138,69 +100,61 @@ type Ques struct {
 var (
 	quesTxt = []Ques{
 		{
-			Id:  "r358ca0f05ae448b782abec9ba41be461",
-			Ans: []string{"Yes"},
-		},
-		{
-			Id:  "r40a7e02204ea401c84abde74455abd17",
-			Ans: []string{"cocoon", "Cocoon", "Frudia", "cỏ mềm", "Cỏ mềm", "decumar"},
-		},
-		{
-			Id:  "rae14fcda382045439e42c1412952c3a5",
+			Id:  "rbf9a69dacb244700a9de97a7e4912735",
 			Ans: mailList,
 		},
 		{
-			Id: "r345a2d420a2c4170a23dd3296ca7081d",
+			Id:  "r10492d18f1574977a9eb1d6af40625d0",
+			Ans: []string{"Có"},
+		},
+		{
+			Id:  "r34373a1a64084a1db540399d473d9a17",
+			Ans: []string{"Đã dùng"},
+		},
+		{
+			Id:  "rc807d0a7d8fe4296a530c6dd1a17815f",
+			Ans: []string{"Có, mình rất muốn thử", "Có, mình rất muốn thử", "Có, mình rất muốn thử", "Có, mình rất muốn thử", "Không, mình không muốn thử"},
+		},
+		{
+			Id:  "rd6a0c0b218b143e392397870ff2ee411",
+			Ans: []string{"cocoon", "Cocoon", "Frudia", "cỏ mềm", "Cỏ mềm", "decumar"},
+		},
+		{
+			Id:  "rd5416c02dd4c48cd8fdda73e7d8f7f22",
+			Ans: []string{"Nữ", "Nữ", "Nữ", "Nữ", "Nữ", "Nam"},
+		},
+		{
+			Id:  "rc13060d56e494305955a823cdfbf2287",
+			Ans: []string{"Sinh viên Đại học", "Sinh viên Đại học", "Sinh viên Đại học", "Tốt nghiệp Đại học", "Đã đi làm"},
+		},
+		{
+			Id:  "rbdc2c061351045f9927bf93916fa53d6",
+			Ans: []string{"Độc thân", "Độc thân", "Đang trong một mối quan hệ"},
+		},
+		{
+			Id: "rffd89e998912452bbeab03083a82475f",
 			Ans: []string{
-				"18-24",
-				"18-24",
-				"18-24",
-				"18-24",
-				"18-24",
-				"25-34",
-				"25-34",
-				"35-44",
+				"18-20 tuổi",
+				"18-20 tuổi",
+				"18-20 tuổi",
+				"18-20 tuổi",
+				"21-25 tuổi",
+				"21-25 tuổi",
+				"21-25 tuổi",
+				"25-30 tuổi",
 			},
 		},
 		{
-			Id:  "r7297f19b771c4ebe842ec43954491279",
-			Ans: []string{"Female", "Female", "Female", "Female", "Female", "Male"},
-		},
-		{
-			Id:  "rde6677ac47a640c79007e7bf76029d00",
-			Ans: []string{"Bachelors or equivalent", "Bachelors or equivalent", "Bachelors or equivalent", "Others", "No education"},
-		},
-		{
-			Id:  "rcbfedb985f23489097cdaa62e53c3766",
-			Ans: []string{"Single", "Single", "Single", "Cohabiting"},
-		},
-
-		{
-			Id:  "r09d7ebc6531d4339b59b43ef8c376a91",
-			Ans: []string{"Clothes", "Beauty products", "Clothes", "Beauty products", "Entertainment"},
-		},
-
-		{
-			Id: "r0b7fac7628ae4184a18e100527fa2ae9",
+			Id: "r44179e41db714d99b2107d9abb687e57",
 			Ans: []string{
-				"<500.000đ",
-				"500.000đ - dưới 1.000.000đ",
-				"1.000.000đ - dưới 4.000.000đ",
-				"1.000.000đ - dưới 4.000.000đ",
-				"1.000.000đ - dưới 4.000.000đ",
-				"1.000.000đ - dưới 4.000.000đ",
-				"4.000.000đ - dưới 6.000.000đ",
-				"4.000.000đ - dưới 6.000.000đ",
-				">= 6.000.000đ",
-			},
-		},
-		{
-			Id: "ra096976dfe744b8586166cc4b8638372",
-			Ans: []string{
-				"good job",
-				"hello",
-				"luv u",
-				"s",
+				"Dưới 3 triệu VNĐ",
+				"Dưới 3 triệu VNĐ",
+				"Dưới 3 triệu VNĐ",
+				"Dưới 3 triệu VNĐ",
+				"Từ 3 đến 5 triệu VNĐ",
+				"Từ 3 đến 5 triệu VNĐ",
+				"Trên 5 triệu VNĐ",
+				"Trên 5 triệu VNĐ",
 			},
 		},
 	}

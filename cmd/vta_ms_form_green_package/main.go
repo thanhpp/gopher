@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"log"
 	"math/rand"
 	"net/http"
 	"time"
@@ -87,7 +88,36 @@ func main() {
 		var ans []interface{}
 
 		rand.Seed(time.Now().UnixMilli())
-		for _, q := range quesTxt {
+		for i, q := range quesTxt {
+			if i == 2 {
+				ansMulChoiceData := AnsMulChoice{
+					QuestionID: quesMul.Id,
+				}
+				count := rand.Intn(len(quesMul.Ans))
+				var strAns []string
+				for k := 0; k < count; k++ {
+					id := rand.Intn(len(quesMul.Ans))
+					shouldAdd := true
+					for j := range strAns {
+						if quesMul.Ans[id] == strAns[j] {
+							shouldAdd = false
+							break
+						}
+					}
+					if shouldAdd {
+						strAns = append(strAns, quesMul.Ans[id])
+					}
+				}
+				if count == 0 {
+					noAns := []string{"Ko", "ko", "không nhớ", "không rõ", "không để ý"}
+					strAns = append(strAns, noAns[rand.Intn(len(noAns))])
+				}
+				unmsStrAns, _ := json.Marshal(strAns)
+				ansMulChoiceData.Answer1 = string(unmsStrAns)
+				ans = append(ans, ansMulChoiceData)
+
+				fmt.Printf("%+v", ansMulChoiceData)
+			}
 			ans = append(
 				ans,
 				AnsTxt{
@@ -100,6 +130,8 @@ func main() {
 		rand.Seed(time.Now().UnixMilli())
 		for _, qG := range qChoice {
 			idx := rand.Intn(len(qG.Answers))
+			counter := rand.Intn(2)
+			sign := 1
 			for _, qC := range qG.Questions {
 				a := qG.Answers[idx]
 				ans = append(
@@ -112,15 +144,17 @@ func main() {
 						},
 					},
 				)
-				if time.Now().UnixNano()%2 == 0 {
-					idx--
+				counter++
+				if counter%2 == 0 {
+					sign = -sign
+					idx += 1 * sign
 					if idx < 0 {
 						idx = 0
+						sign = -sign
 					}
-				} else {
-					idx++
-					if idx >= len(qG.Answers) {
+					if idx >= len(qG.Answers)-1 {
 						idx = len(qG.Answers) - 1
+						sign = -sign
 					}
 				}
 			}
@@ -134,33 +168,34 @@ func main() {
 
 		fmt.Printf("\n****\n%s\n****\n", string(data))
 
-		req, err := http.NewRequest("POST", "https://forms.office.com/formapi/api/24ee7655-0535-4f97-9cc2-bc21a13e2674/users/7eaa579a-9911-4dee-8c56-0a2ef89e7f1f/forms('VXbuJDUFl0-cwrwhoT4mdJpXqn4Rme5NjFYKLviefx9UMjJMWTE3RDVTTFlLTVc2V09XTzZJVVJZUS4u')/responses", bytes.NewReader(data))
+		req, err := http.NewRequest("POST", "https://forms.office.com/formapi/api/06f1b89f-07e8-464f-b408-ec1b45703f31/users/906fae39-280f-400a-adfd-21da07a30638/forms('n7jxBugHT0a0COwbRXA_MTmub5APKApArf0h2gejBjhUN080SVc4NkVNMzc4RlBKVkdaSVY0RFQ4OC4u')/responses", bytes.NewReader(data))
 		if err != nil {
-			// handle err
+			log.Fatal(err)
 		}
-		req.Header.Set("Authority", "forms.office.com")
-		req.Header.Set("__requestverificationtoken", "tCrDiDgz8tZhjWXPUWMaZlJMczo-ybsA9TAnJcXMWwSi7L_9A8ARsJNj9wrl9wCEztjTp1H_Xq_bDZnOz26WqJZ6RBKkKZTAb-q9qv1EtPA1")
-		req.Header.Set("Accept", "application/json")
-		req.Header.Set("Accept-Language", "en-US,en;q=0.9,vi;q=0.8")
-		req.Header.Set("Content-Type", "application/json")
-		req.Header.Set("Cookie", "RpsAuthNonce=157c7263-ff43-4ba3-83ef-720fb8fd56ae; RpsAuthNonce=157c7263-ff43-4ba3-83ef-720fb8fd56ae; __RequestVerificationToken=kHogBsXxKOODWlQgcyi-etc5-_u-Pl5iHGs8qlNBqXguh0GTRRmA-MQ8iY74ZOHFqJ9V8HeHWdDJbKZ-pml6ehMF20_b_dxw7DZHekg3e481; MUID=1CFD32BACFD46D3F258F20EDCEB26CEF; MSFPC=GUID=81cb6ab657844aeb99b0a632484d9911&HASH=81cb&LV=202211&V=4&LU=1668485257073; MicrosoftApplicationsTelemetryDeviceId=53f22f8c-24b8-45fe-a81a-f30672f505b3; ai_session=ctxrrFd5b4GB9SpSL0gMWV|1668612257068|1668614140643")
-		req.Header.Set("Dnt", "1")
-		req.Header.Set("Odata-Maxverion", "4.0")
-		req.Header.Set("Odata-Version", "4.0")
-		req.Header.Set("Origin", "https://forms.office.com")
-		req.Header.Set("Referer", "https://forms.office.com/pages/responsepage.aspx?id=VXbuJDUFl0-cwrwhoT4mdJpXqn4Rme5NjFYKLviefx9UMjJMWTE3RDVTTFlLTVc2V09XTzZJVVJZUS4u")
-		req.Header.Set("Sec-Ch-Ua", "\"Google Chrome\";v=\"107\", \"Chromium\";v=\"107\", \"Not=A?Brand\";v=\"24\"")
-		req.Header.Set("Sec-Ch-Ua-Mobile", "?0")
-		req.Header.Set("Sec-Ch-Ua-Platform", "\"Linux\"")
-		req.Header.Set("Sec-Fetch-Dest", "empty")
-		req.Header.Set("Sec-Fetch-Mode", "cors")
-		req.Header.Set("Sec-Fetch-Site", "same-origin")
-		req.Header.Set("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36")
-		req.Header.Set("X-Correlationid", "d6de8f67-913b-423d-b5cd-832aa8bae0d9")
-		req.Header.Set("X-Ms-Form-Muid", "1CFD32BACFD46D3F258F20EDCEB26CEF")
-		req.Header.Set("X-Ms-Form-Request-Ring", "business")
-		req.Header.Set("X-Ms-Form-Request-Source", "ms-formweb")
-		req.Header.Set("X-Usersessionid", "0fd14295-b89b-4d4c-a393-259f04d1c5e0")
+		req.Header.Set("authority", "forms.office.com")
+		req.Header.Set("__requestverificationtoken", "VjR9ZFoVW5oJky3qH7PSNQhgsL5IWajgeqglc7vA6UPw7wNb_J2wvF2-Ion6M4a0VVVfg1U2GwB4BM8KWTqQdio2TmbonPaV31IJ0iHL7rwTw5AlAtMWX25Nt0DTyrV9tGopoQapLkNckpHE8Vau2w2")
+		req.Header.Set("accept", "application/json")
+		req.Header.Set("accept-language", "en-US,en;q=0.9,vi;q=0.8")
+		req.Header.Set("authorization", "")
+		req.Header.Set("content-type", "application/json")
+		req.Header.Set("cookie", "RpsAuthNonce=157c7263-ff43-4ba3-83ef-720fb8fd56ae; RpsAuthNonce=157c7263-ff43-4ba3-83ef-720fb8fd56ae; __RequestVerificationToken=kHogBsXxKOODWlQgcyi-etc5-_u-Pl5iHGs8qlNBqXguh0GTRRmA-MQ8iY74ZOHFqJ9V8HeHWdDJbKZ-pml6ehMF20_b_dxw7DZHekg3e481; MUID=1CFD32BACFD46D3F258F20EDCEB26CEF; MSFPC=GUID=81cb6ab657844aeb99b0a632484d9911&HASH=81cb&LV=202211&V=4&LU=1668485257073; FormsWebSessionId=c2aa4330-a47a-4803-b43e-168bc3e18e28; usenewauthrollout=True; AADAuth.forms=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IjJaUXBKM1VwYmpBWVhZR2FYRUpsOGxWMFRPSSIsImtpZCI6IjJaUXBKM1VwYmpBWVhZR2FYRUpsOGxWMFRPSSJ9.eyJhdWQiOiJjOWE1NTlkMi03YWFiLTRmMTMtYTZlZC1lN2U5YzUyYWVjODciLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC8wNmYxYjg5Zi0wN2U4LTQ2NGYtYjQwOC1lYzFiNDU3MDNmMzEvIiwiaWF0IjoxNjY4NjIyMTQzLCJuYmYiOjE2Njg2MjIxNDMsImV4cCI6MTY2ODYyNjA0MywiYWlvIjoiQVRRQXkvOFRBQUFBeFhURGUvSndjdWoybWVMdjd1TUJnRHdWbEU1Rkx1SFgyc3hRZGRkQXN5MVRqTXJ6c1QvRVNESU5MV2Q4ajVqNSIsImFtciI6WyJwd2QiXSwiY19oYXNoIjoiMVcydy1zQnJOX0w0SVpiWmxXR2YwQSIsImNjIjoiQ21DWkVhOEtIMlQ1Mk1GdG40ZGtTQVFJWUw0S1JWdHZBa2xnSFhyV1Z5aVYwb3lWaXUxN1RLZTlHNmVPQ2NmUzMyQXpsTnl1NFFQVUVEUzYzdmo1K1RYMkh1MlhZRFFXMmREL2d4NUJoZS9scm0zVDV2RUFaMllqcW9ubE5xM1pUNndTRDNOcGN5NW9kWE4wTG1Wa2RTNTJiaG9TQ2hBckE3RlFic3VmUktTNEc1Q2RRZGFzSWhJS0VBWE5qNEJpRjNOTXFoMisrR1huT1FBb0FUSUNRVk00QVVJSkNRQldqcFk3WGRsSSIsImluX2NvcnAiOiJ0cnVlIiwiaXBhZGRyIjoiMS41NS42LjYxIiwibmFtZSI6IlBIQU4gUEhVIFRIQU5IIDIwMTc2MTEzIiwibm9uY2UiOiI2MzgwNDIxOTIzNDIxMjc1ODguWWpsaU5ERmhZall0TURNeVppMDBZelppTFRrMFl6WXRORE5oWVRSa1ltSmhabU0wWkdKbE1EQXpORGt0TVRZeE9DMDBOVE5oTFRrMU5tRXRNREZoTnpjd01UTmlOMlZpIiwib2lkIjoiOTA2ZmFlMzktMjgwZi00MDBhLWFkZmQtMjFkYTA3YTMwNjM4Iiwib25wcmVtX3NpZCI6IlMtMS01LTIxLTI3NDYyNTEwMDctMTMyNDU5NTIwNi03ODE2NTQzNTEtNDg5MDQiLCJwdWlkIjoiMTAwM0JGRkRBOUZFQjA1OSIsInJoIjoiMC5BWElBbjdqeEJ1Z0hUMGEwQ093YlJYQV9NZEpacGNtcmVoTlBwdTNuNmNVcTdJZHlBQ2cuIiwic3ViIjoiTmdYbjM4SmVPY05DSEwyb0ZtQ3hJbGlrcEFPN01fT3hRQmhmbWtYZmZ5TSIsInRpZCI6IjA2ZjFiODlmLTA3ZTgtNDY0Zi1iNDA4LWVjMWI0NTcwM2YzMSIsInVuaXF1ZV9uYW1lIjoiVEhBTkguUFAxNzYxMTNAc2lzLmh1c3QuZWR1LnZuIiwidXBuIjoiVEhBTkguUFAxNzYxMTNAc2lzLmh1c3QuZWR1LnZuIiwidXRpIjoiQmMyUGdHSVhjMHlxSGI3NFplYzVBQSIsInZlciI6IjEuMCIsIndpZHMiOlsiYjc5ZmJmNGQtM2VmOS00Njg5LTgxNDMtNzZiMTk0ZTg1NTA5Il19.YUckLkLwsqvUrjmI7FbeI9VnXgUFBOYK_M0Z21D67HSaJEeZKWlB82fo1N5sa4lfxK3_eX6wWMsgTnOlh9uRRnXijrAExpwyMUI08tNRxhMKKkQrG2JD8g7h9Grf4R-Lp-KAQzZtT-qwZlx7Lqysdw9lzCxkID2DwV7EtKfbvS0HCZFCD5cGZEqcvJoDqckF9s_5MjAqPXpzWYPyZH79XI9iz2Pch7IwsZdPFkCGtG7Wkl4Iz-QpAk3yCA-_LV9PPydkdUeATpuCreTLJFdASamMpw1EOpu_PMRMj4gGhAZAPYbm3UEN3G61axGs31xB1dFs7rPnX6yfLac4XrHE2Q; AADAuthCode.forms=0.AXIAn7jxBugHT0a0COwbRXA_MdJZpcmrehNPpu3n6cUq7IcBAAA.AgABAAIAAAD--DLA3VO7QrddgJg7WevrAgDs_wQA9P9UWkHW7jNCIv5mxBS-nZ0vx7G3RrpDgd82irt0LJVcM8HGPwTacJyuL8tLGPiyrZb4KVXS88Xmm396wFpkH99Q8w3gEJxWVLsNLl8rTQIAJwluLovyEHSr-OqBOxR3n35uN8jNPuhF3IOMwZczNjazRgMVAL14VAOR9aCBzwwf4LILIaotAk2fMzA7sB_3vO9hwxDCHtRqfA_iaq2ZOHecqMSVwdbqSKYTQk5eBeU6-p_0K-VcNffD7I2OVM0yEBo3SiaVisaSA8nDPYujqI_1H1CnStwEbO7RxDQWA9kG6GFbd-YSaUbkkB6j_OXCBVzo_xQNuKTMHzZtKrLFiE-gK4Xn8dVBbDCl8N_JVL6zh14iCo_lKBa2HRVBFS628csVnBM_DSyaytvAFD3kbBe78Rt_Um-yuYX8Qu9VaVPgu5GKRQXjmSJCqtZSTmj9UwqoJH9hC6IddCFE3yXRjALNv-aBOvYdnVRZwP7nV4ncs6wJ3jXON_ce-oWZpoJD75OVMy4V_MWiG8qRxm5Upmw0wN23DKI2_r3vbwAeWxrFuqosxeTozIYxGTeOYFV0Xov1j-iiH8SxdxXXa4CX_Y3pIicZp_D7CpYguL6P0KbnZ4ZxuGK3FAxaDpSD1GuxxchZedecv1x-ZYCp8QCbVD9Tzltt5xg_2NZ5Y4y-68U4IH1tZNPLi7Bvoo8Pn_ae4D6I76DJM2A1airIfa5c_Hvqiz5uJkfNCK5Dns1mInltfJWFO5XTwxQwjC-tCHMn29WSZK5_gSsTwsiUhTseE9x-nRm0s95tayshYbqQjn2p7cj0Q6To9bxztJ3LVt4eFu-DShZI_5A7lzSKbZTM4Ci-LcluWDNuWs4TDt0cqSSuG3MTO5In; OIDCAuth.forms=Af1FiTjGIxh1q0V72IHCZUiS_JAFqtdAKQ6P_qLLtZQ7KtFqEey-4RRuyvyKc_pDW5d32Q13pkP7SoueZmROhMVSqokhPXo7DD8o35repFMj3zK6zwCWanW7CuAKAwjehgX5JgqYws1AM43iVQ_Qj96SXEhkPa_gh2OSRtdB2asGSgkEeAXzUhLVtC2BqRIm6-O2dh9f8S11QSeTUzcnutl5QE_BB0RlbdxbekL8WCd3DJCnhOozMByMStiCnMVZmzazIUOrU9NtOeBSqBr80ETXyzKCPLzWZ-hw7tgbGfpI-hw6TBl-O1Sr7FiDavSlvSyzOSwhxekuiwutHyPekBF0Da5QeLy_mCyZffQwTzYG5LSyZAjIO_olwhioPT9fxQ_E8nzweg3c8ujEOlIC8Wb1628vpmEs7Af4AvvLejSq2-766GS3i2S_dzsfnesnwvUPJorLfhyNDIiOWcWfim6jsakVpgewLwXYfwCUqp-PZsp5xkGlUT-F9FldSta6o9TN9YGHyvSZn6kPw4vq3dU9PfLfW4j9z9v2Ks3M-xYOE-jCTwfJXK4KDMKV0HhwBBdp-K45i2wt6wcp4L3Uimiy2_DkTBfudUHBRTSVsAbibI0Cig3IkbDW-5IUKL1zPgMSLE1xWyIbrDeot2vyBi8RLtq8fLuKAIQQfBEd_Qy3GHekhEPgFA0NtCTCI2O3NCrG_OyaAH3wuZjcPUC8h8eUTFHGEvXnJnpHbYEXUprX62I-EDTFXGPW_T3FOr7ruwg088cl7FtFIGk-h8MJOo_OfFWIRYFigukieqP72IyUijvRsV3aa6Mg5B68XDp-oo7vVdU0cWe5bZ6JEEWJjpRBrZ8piRKnXVKZ_i1RZo0BlI0-d5n6THE8LpLDQM86YCbGLB-6_2pZeUy_3JxoYVI-gYxJMtKAo2AD2iGlW4xlGjEm4caswmd-C3rc7r9Hq9I_RwcTI_K-mBE2PvKeFo64OZhlpwHNCVJQrx6J6VEFlYrSSMuNedW7SP-o_3NgtWCZubpDW5nkzffyBll60k6jYGzyuQ2-O3ezOLaem8VIDFzVAGM60yuO0BB8b5uFkmsG_J--jdMoHksidwi2A92WQILnHmXJwJ7nsUDj1B7BPoZ03oJ2vOu0V0jVzyQDI9h7UfqC9CLzh-ytDZl3ED6NWCIkogd6REkhuH8haPlKm8mKWltbeAD5owSaDwfiBpVcibzX7-OjAIXf8TumXCVaPjEn_F3vEfHP0vJY_0HdD4_VEsU47ZkfVvGQSgWM7CBz_3JjV3wVY_qQc8bLMaSZAp57bO-wTDqDFBG7Pfvtw1HGyopX_u8Nz3v7Mw6xQh3JFZpdzFQFgrTzBEmAnW1Jk2l6xqz4UqKhJTynNG4i18Z4IdEqAewdwmgmKZqSm7fWEtqALYj1lguSxCJfx01-tr8i8BjHnPfDEHVt56P7yVUZOSXRh2kfriWfe_wcleRAwUtix2T6W6P-hpvmVhMcY67TFBWaY5rdKj7knRquZ8miL4si7-XOCCxccR1STGJq98lRw96M9eLZ2O0ay8MCa6dfMzk2sDRa5SHIRQXIjYzMM_h24IKUT_CBQfGOrbPvoqTR_e4t5CebS4eFPceZlPOx9M-yyspIi1D7rsozvS2uzNY59TSZ2TdpSOn5wPPThQTnZSZlLDAqlM0QHrQZU3R9XW3YztnOfK47KHyZE_otuxqdXS7PVKoQq96165N6jclf5alFFRw-wIr8kTqM3e-mfzdRpY_PqZNBJoaX3ODrIUP3SxbaNuC4qluRfcCJyNrmaE9AQOQM8zJx9GKbl3JUqCf1cd7NVHK3MMa4FLCTL5x6fJLICIA8FO2N3xBqNde3nvfnB5rs5BjduCNu7dR1rCf6OYB0b1XRtkIF1UzzjC2ep8Hu4cDv5sikKSguclYgT7dl1YtwsSG1PTzhsvBCidKOWu2ZJY4MZW1Y; MicrosoftApplicationsTelemetryDeviceId=5be2ee84-3204-45cd-b9b1-8344c5f3a944; ai_session=VIvfrYt3AAtVinwsDx6lvs|1668622418048|1668623086120")
+		req.Header.Set("dnt", "1")
+		req.Header.Set("odata-maxverion", "4.0")
+		req.Header.Set("odata-version", "4.0")
+		req.Header.Set("origin", "https://forms.office.com")
+		req.Header.Set("referer", "https://forms.office.com/Pages/ResponsePage.aspx?id=n7jxBugHT0a0COwbRXA_MTmub5APKApArf0h2gejBjhUN080SVc4NkVNMzc4RlBKVkdaSVY0RFQ4OC4u")
+		req.Header.Set("sec-ch-ua", `"Google Chrome";v="107", "Chromium";v="107", "Not=A?Brand";v="24"`)
+		req.Header.Set("sec-ch-ua-mobile", "?0")
+		req.Header.Set("sec-ch-ua-platform", `"Linux"`)
+		req.Header.Set("sec-fetch-dest", "empty")
+		req.Header.Set("sec-fetch-mode", "cors")
+		req.Header.Set("sec-fetch-site", "same-origin")
+		req.Header.Set("user-agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36")
+		req.Header.Set("x-correlationid", "2ae6eafa-a4fd-44ff-b1fc-e7b76f143fcf")
+		req.Header.Set("x-ms-form-muid", "1CFD32BACFD46D3F258F20EDCEB26CEF")
+		req.Header.Set("x-ms-form-request-ring", "business")
+		req.Header.Set("x-ms-form-request-source", "ms-formweb")
+		req.Header.Set("x-usersessionid", "b8d3a94f-27aa-4fb9-8557-4fea0f6a39c3")
 
 		resp, err := http.DefaultClient.Do(req)
 		if err != nil {
