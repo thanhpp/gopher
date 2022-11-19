@@ -6,18 +6,23 @@ type Ans struct {
 }
 
 type QuesGroup struct {
-	Questions []string
+	Questions []QuesID
 	Answers   []Ans
 }
 
+type QuesID struct {
+	ID    string
+	IsPos bool
+}
+
 var (
-	qChoice = []QuesGroup{q1, q3, q4, q5, q6, q7}
-	q1      = QuesGroup{
-		Questions: []string{
-			"rb906468d6d5c493993e7c909c5c404e2",
-			"r9c0ce440bec342609c023c9f28d2dc0f",
-			"r7e1f495b4bf548b999c34478050e1e45",
-			"r8ff21380b92d467d9a4dd4f1ed59bddf",
+	qChoiceGr = []QuesGroup{q1, q3, q4, q5, q6, q7}
+	q1        = QuesGroup{
+		Questions: []QuesID{
+			{"rb906468d6d5c493993e7c909c5c404e2", true},
+			{"r9c0ce440bec342609c023c9f28d2dc0f", true},
+			{"r7e1f495b4bf548b999c34478050e1e45", true},
+			{"r8ff21380b92d467d9a4dd4f1ed59bddf", true},
 		},
 		Answers: []Ans{
 			{1, "65ac90a1-1931-4a46-b6c9-2f2acc16fc8a"},
@@ -31,11 +36,11 @@ var (
 	}
 
 	q3 = QuesGroup{
-		Questions: []string{
-			"r40a95e2904804766b543da0ab9a3ef30",
-			"r09ed9f7550e54b198426dacd72d83d42",
-			"rb4fd1e63ea054333b9370a6053ba0058",
-			"r88ca2040ca484689a750a840a6021d3a",
+		Questions: []QuesID{
+			{"r40a95e2904804766b543da0ab9a3ef30", true},
+			{"r09ed9f7550e54b198426dacd72d83d42", true},
+			{"rb4fd1e63ea054333b9370a6053ba0058", true},
+			{"r88ca2040ca484689a750a840a6021d3a", true},
 		},
 		Answers: []Ans{
 			{1, "65ac90a1-1931-4a46-b6c9-2f2acc16fc8a"},
@@ -49,10 +54,10 @@ var (
 	}
 
 	q4 = QuesGroup{
-		Questions: []string{
-			"r2fad0b4bf008408aa033ad02d9e13ee2",
-			"reac54be4b6cc4293ade67aee6a70c785",
-			"r6055ef45dbe8492cbe19f67d3474a696",
+		Questions: []QuesID{
+			{"r2fad0b4bf008408aa033ad02d9e13ee2", false},
+			{"reac54be4b6cc4293ade67aee6a70c785", true},
+			{"r6055ef45dbe8492cbe19f67d3474a696", true},
 		},
 		Answers: []Ans{
 			{1, "65ac90a1-1931-4a46-b6c9-2f2acc16fc8a"},
@@ -66,15 +71,15 @@ var (
 	}
 
 	q5 = QuesGroup{
-		Questions: []string{
-			"rce5d2fd6841b4c8a8152c1efd149db25",
-			"r997122a017cf4c9ebd1aa337ff903f0f",
-			"r8e9364c75b8e419fa4a4324dbd887b9b",
-			"r5956259036554904b9f8bf7adf391d50",
-			"ra52c083cd2964c19857d4fde5c9bd586",
-			"ra6153b5d21bf4b5b8a9c54ec96a1ad63",
-			"r83f55c9279c848f0965ec2d89a277951",
-			"r929c7424dfd14018bc188f5aec092280",
+		Questions: []QuesID{
+			{"rce5d2fd6841b4c8a8152c1efd149db25", true},
+			{"r997122a017cf4c9ebd1aa337ff903f0f", false},
+			{"r8e9364c75b8e419fa4a4324dbd887b9b", true},
+			{"r5956259036554904b9f8bf7adf391d50", true},
+			{"ra52c083cd2964c19857d4fde5c9bd586", true},
+			{"ra6153b5d21bf4b5b8a9c54ec96a1ad63", false},
+			{"r83f55c9279c848f0965ec2d89a277951", false},
+			{"r929c7424dfd14018bc188f5aec092280", true},
 		},
 		Answers: []Ans{
 			{1, "cad8e26d-b8c6-40cc-b950-cf5a9e966d69"},
@@ -88,14 +93,14 @@ var (
 	}
 
 	q6 = QuesGroup{
-		Questions: []string{
-			"rb0874f69324a44d0ac11ed67e68a0a11",
-			"r1d5afe61e9c94adb8ba27336dd9bb5b8",
-			"r169a11e02ea546f69c36c1a5317eafed",
-			"rc915909ee07647afb1dc0749f5108837",
-			"r1b8e52083bdf404a9a4e51360f184837",
-			"rab4f505929614cb68ea9438dbc41c9f0",
-			"rd2a76bfef1a1456baed3d6875ed8ec90",
+		Questions: []QuesID{
+			{"rb0874f69324a44d0ac11ed67e68a0a11", true},
+			{"r1d5afe61e9c94adb8ba27336dd9bb5b8", true},
+			{"r169a11e02ea546f69c36c1a5317eafed", true},
+			{"rc915909ee07647afb1dc0749f5108837", true},
+			{"r1b8e52083bdf404a9a4e51360f184837", true},
+			{"rab4f505929614cb68ea9438dbc41c9f0", true},
+			{"rd2a76bfef1a1456baed3d6875ed8ec90", true},
 		},
 		Answers: []Ans{
 			{1, "c9cab424-4118-4f52-b45c-d97dfd8ae80f"},
@@ -109,14 +114,14 @@ var (
 	}
 
 	q7 = QuesGroup{
-		Questions: []string{
-			"r9302cc913d334977ac000bb62146fd05",
-			"r3e0d7da13f4e431ca79994dccaf2b703",
-			"rfebd13a157064719bc092f614fc3f002",
-			"r204d4119244c4a8e8537d8054801a3d9",
-			"r14ce9d334e8843878156c93ba6225f24",
-			"r179924712d314511891f33123f0b520e",
-			"r6e27fafe69434f06a2c9680d61fd1ecc",
+		Questions: []QuesID{
+			{"r9302cc913d334977ac000bb62146fd05", true},
+			{"r3e0d7da13f4e431ca79994dccaf2b703", true},
+			{"rfebd13a157064719bc092f614fc3f002", true},
+			{"r204d4119244c4a8e8537d8054801a3d9", true},
+			{"r14ce9d334e8843878156c93ba6225f24", true},
+			{"r179924712d314511891f33123f0b520e", false},
+			{"r6e27fafe69434f06a2c9680d61fd1ecc", false},
 		},
 		Answers: []Ans{
 			{1, "3f7600dc-27e2-4bc3-8b99-5d8dd502c77d"},

@@ -6,24 +6,29 @@ type Ans struct {
 }
 
 type QuesGroup struct {
-	Questions []string
+	Questions []QuesID
 	Answers   []Ans
+}
+
+type QuesID struct {
+	ID    string
+	IsPos bool
 }
 
 var (
 	qChoice = []QuesGroup{q1, q2, q3}
 	q1      = QuesGroup{
-		Questions: []string{
-			"r04f8a63450614a439783eee1d64fcd8e",
-			"r1acd5486eaba4640812695314c8ddb50",
-			"r282e11efca4746699b77b2a97877337e",
-			"r4caefb532498457eae9bdc147533935b",
-			"r54dbbad30f684d0fbae9c944b07701c5",
-			"r9056b52a98d64550b4efca6ef6a850e0",
-			"r9ddef0a0dbaf40cfba7fb639f820d377",
-			"rc20fc8e50fd04464af9367e88df79e85",
-			"rc2efd2b723f543cdb80e604ec5caa597",
-			"rece97f3a671447f4b795293b533e76b4",
+		Questions: []QuesID{
+			QuesID{"r04f8a63450614a439783eee1d64fcd8e", true},
+			QuesID{"r1acd5486eaba4640812695314c8ddb50", true},
+			QuesID{"r282e11efca4746699b77b2a97877337e", true},
+			QuesID{"r4caefb532498457eae9bdc147533935b", true},
+			QuesID{"r54dbbad30f684d0fbae9c944b07701c5", true},
+			QuesID{"r9056b52a98d64550b4efca6ef6a850e0", true},
+			QuesID{"r9ddef0a0dbaf40cfba7fb639f820d377", true},
+			QuesID{"rc20fc8e50fd04464af9367e88df79e85", true},
+			QuesID{"rc2efd2b723f543cdb80e604ec5caa597", true},
+			QuesID{"rece97f3a671447f4b795293b533e76b4", true},
 		},
 		Answers: []Ans{
 			{1, "1af6d609-de0e-4a44-8760-bc6b87f48a10"},
@@ -37,15 +42,15 @@ var (
 	}
 
 	q2 = QuesGroup{
-		Questions: []string{
-			"rde79c7395b4e46eb84605b658ac698f6",
-			"r0dc878569da646d781fe630bf8071f85",
-			"rd352b222501f4c0391ddf89a630e05eb",
-			"ra98e685c3af44904b5389c64a16e4913",
-			"r968bebf2a04247a6bfa910a16d9a4aa8",
-			"re1718eb4321d4e76baecd4e894a21e22",
-			"rf5a143b617fa4b2cb4fe222b92a3cd3d",
-			"r20db2bf8cc6a4027bdda06a667bfddb7",
+		Questions: []QuesID{
+			QuesID{"rde79c7395b4e46eb84605b658ac698f6", true},
+			QuesID{"r0dc878569da646d781fe630bf8071f85", true},
+			QuesID{"rd352b222501f4c0391ddf89a630e05eb", true},
+			QuesID{"ra98e685c3af44904b5389c64a16e4913", true},
+			QuesID{"r968bebf2a04247a6bfa910a16d9a4aa8", true},
+			QuesID{"re1718eb4321d4e76baecd4e894a21e22", true},
+			QuesID{"rf5a143b617fa4b2cb4fe222b92a3cd3d", true},
+			QuesID{"r20db2bf8cc6a4027bdda06a667bfddb7", true},
 		},
 		Answers: []Ans{
 			{1, "a0f3757a-2390-43a4-8411-0e0086188714"},
@@ -59,14 +64,14 @@ var (
 	}
 
 	q3 = QuesGroup{
-		Questions: []string{
-			"r6090b752758a44f08ea8edc5cd83089a",
-			"r89ca726b97504cd79434726227b11c01",
-			"r979bd382cb9e43a18ee27852b1a3d6db",
-			"ra883a11e27224ecaa8d6ec4981aaf533",
-			"rbbe81ab5579f43e499d31f5ccad24b39",
-			"rd096d60cddad4b4da5fed238d689769c",
-			"rebfc2d78bf40457386fa5e7d0778565d",
+		Questions: []QuesID{
+			QuesID{"r6090b752758a44f08ea8edc5cd83089a", true},
+			QuesID{"r89ca726b97504cd79434726227b11c01", true},
+			QuesID{"r979bd382cb9e43a18ee27852b1a3d6db", true},
+			QuesID{"ra883a11e27224ecaa8d6ec4981aaf533", true},
+			QuesID{"rbbe81ab5579f43e499d31f5ccad24b39", true},
+			QuesID{"rd096d60cddad4b4da5fed238d689769c", true},
+			QuesID{"rebfc2d78bf40457386fa5e7d0778565d", true},
 		},
 		Answers: []Ans{
 			{1, "8c7e2bce-da6b-42d9-bd8a-618780af863d"},
