@@ -31,7 +31,7 @@ func NewStateWatcher(slackWebhook string, vtClient *vtclient.Client, slackClient
 	}
 }
 
-func (s *StateWatcher) Start(ctx context.Context) {
+func (s *StateWatcher) Start(ctx context.Context) { // nolint: gocognit
 	t := time.NewTicker(stateWatchInterval)
 	defer t.Stop()
 
@@ -46,11 +46,18 @@ func (s *StateWatcher) Start(ctx context.Context) {
 			log.Println("[SKIP ERROR]", err)
 			continue
 		}
-		log.Println("[DEBUG] get states", len(states))
-
+		// filter empty state
+		var fileredStates []vtclient.StateData
 		for i := range states {
-			log.Printf("[DEBUG] state %s. P1 CEX Order: %d", states[i].StateID, len(states[i].P1CEXOrders))
-			if err := s.checkAndNotifyState(ctx, &states[i]); err != nil {
+			if len(states[i].P1CEXOrders) != 0 {
+				fileredStates = append(fileredStates, states[i])
+			}
+		}
+		log.Println("[DEBUG] get states", len(fileredStates))
+
+		for i := range fileredStates {
+			log.Printf("[DEBUG] state %s. P1 CEX Order: %d", fileredStates[i].StateID, len(fileredStates[i].P1CEXOrders))
+			if err := s.checkAndNotifyState(ctx, &fileredStates[i]); err != nil {
 				log.Println("[SKIP ERROR]", err)
 				continue
 			}
@@ -58,8 +65,8 @@ func (s *StateWatcher) Start(ctx context.Context) {
 
 		for k := range s.statesCache {
 			isFound := false
-			for i := range states {
-				if states[i].StateID == k {
+			for i := range fileredStates {
+				if fileredStates[i].StateID == k {
 					isFound = true
 					break
 				}
