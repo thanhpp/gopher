@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	stateWatchInterval = time.Second
+	stateWatchInterval = time.Second * 5
 )
 
 type StateWatcher struct {
