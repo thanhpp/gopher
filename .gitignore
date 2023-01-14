@@ -16,6 +16,7 @@
 
 secrets/*
 secrets
+token.json
 
 # Generate files
 *.csv
