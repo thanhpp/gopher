@@ -17,16 +17,16 @@ type StaticExtra struct {
 
 var (
 	data = `{
-		"poolId": "poolIdpoolIdpoolIdpoolId",
-		"lpToken": "lpTokenlpTokenlpTokenlpTokenlpToken",
-		"type": "typetypetypetypetypetypetype",
-		"tokens": [
-			"tokenstokenstokenstokenstokenstokens",
-			"tokenstokenstokenstokens",
-			"tokenstokens",
-			"tokenstokenstokenstokens"
-		],
-		"dodoV1SellHelper": "dodoV1SellHelperdodoV1SellHelperdodoV1SellHelperdodoV1SellHelper"
+	"poolId": "poolIdpoolIdpoolIdpoolId",
+	"lpToken": "lpTokenlpTokenlpTokenlpTokenlpToken",
+	"type": "typetypetypetypetypetypetype",
+	"tokens": [
+		"tokenstokenstokenstokenstokenstokens",
+		"tokenstokenstokenstokens",
+		"tokenstokens",
+		"tokenstokenstokenstokens"
+	],
+	"dodoV1SellHelper": "dodoV1SellHelperdodoV1SellHelperdodoV1SellHelperdodoV1SellHelper"
 }`
 )
 
