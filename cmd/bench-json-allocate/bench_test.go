@@ -58,6 +58,13 @@ func BenchmarkJSONAllocate(b *testing.B) {
 	}
 }
 
+func BenchmarkJSONNil(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		var s = &StaticExtra{}
+		json.Unmarshal([]byte(data), s)
+	}
+}
+
 /*
 1.18
 
