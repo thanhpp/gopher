@@ -1,6 +1,6 @@
 module github.com/thanhpp/gopher
 
-go 1.18
+go 1.20
 
 require (
 	github.com/PuerkitoBio/goquery v1.5.1
@@ -12,6 +12,7 @@ require (
 	github.com/gocolly/colly v1.2.0
 	github.com/gocolly/colly/v2 v2.1.0
 	github.com/joho/godotenv v1.4.0
+	github.com/json-iterator/go v1.1.12
 	github.com/sourcegraph/conc v0.1.0
 	github.com/spf13/viper v1.14.0
 	github.com/stretchr/testify v1.8.1
@@ -52,7 +53,6 @@ require (
 	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
-	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/kennygrant/sanitize v1.2.4 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/magiconair/properties v1.8.6 // indirect
