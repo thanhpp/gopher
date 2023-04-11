@@ -1,19 +1,13 @@
-package main
+package benchjsonallocate_test
 
 import (
 	"encoding/json"
 	"testing"
 
 	jsoniter "github.com/json-iterator/go"
+	"github.com/mailru/easyjson"
+	benchjsonallocate "github.com/thanhpp/gopher/cmd/bench-json-allocate"
 )
-
-type StaticExtra struct {
-	PoolId           string   `json:"poolId"`
-	LpToken          string   `json:"lpToken"`
-	Type             string   `json:"type"`
-	Tokens           []string `json:"tokens"`
-	DodoV1SellHelper string   `json:"dodoV1SellHelper"`
-}
 
 var (
 	data = `{
@@ -30,70 +24,39 @@ var (
 }`
 )
 
-// func BenchmarkJSONiterNonAllocate(b *testing.B) {
-// 	json := jsoniter.ConfigDefault
-// 	for i := 0; i < b.N; i++ {
-// 		var s StaticExtra
-// 		json.UnmarshalFromString(data, &s)
-// 	}
-// }
-
 func BenchmarkJSONiterAllocate(b *testing.B) {
 	json := jsoniter.ConfigDefault
 	for i := 0; i < b.N; i++ {
-		s := new(StaticExtra)
-		json.UnmarshalFromString(data, s)
+		var s benchjsonallocate.StaticExtra
+		json.UnmarshalFromString(data, &s)
 	}
 }
-
-// func BenchmarkJSONNonAllocate(b *testing.B) {
-// 	for i := 0; i < b.N; i++ {
-// 		var s StaticExtra
-// 		json.Unmarshal([]byte(data), &s)
-// 	}
-// }
 
 func BenchmarkJSONAllocate(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		s := new(StaticExtra)
-		json.Unmarshal([]byte(data), s)
+		var s benchjsonallocate.StaticExtra
+		json.Unmarshal([]byte(data), &s)
+	}
+}
+
+func BenchmarkEasyJSON(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		var s benchjsonallocate.StaticExtra
+		easyjson.Unmarshal([]byte(data), &s)
 	}
 }
 
 /*
-1.18
-
 goos: linux
 goarch: amd64
 pkg: github.com/thanhpp/gopher/cmd/bench-json-allocate
 cpu: AMD Ryzen 5 5600G with Radeon Graphics
-BenchmarkJSONiterNonAllocate
-BenchmarkJSONiterNonAllocate-12    	 1168766	      1042 ns/op	     920 B/op	      18 allocs/op
 BenchmarkJSONiterAllocate
-BenchmarkJSONiterAllocate-12       	 1000000	      1011 ns/op	     920 B/op	      18 allocs/op
-BenchmarkJSONNonAllocate
-BenchmarkJSONNonAllocate-12        	  383960	      3174 ns/op	    1080 B/op	      17 allocs/op
+BenchmarkJSONiterAllocate-12    	  837956	      2240 ns/op	    1296 B/op	      19 allocs/op
 BenchmarkJSONAllocate
-BenchmarkJSONAllocate-12           	  377635	      3063 ns/op	    1080 B/op	      17 allocs/op
+BenchmarkJSONAllocate-12        	  281359	      3968 ns/op	     992 B/op	      14 allocs/op
+BenchmarkEasyJSON
+BenchmarkEasyJSON-12            	 1000000	      1266 ns/op	     728 B/op	      10 allocs/op
 PASS
-ok  	github.com/thanhpp/gopher/cmd/bench-json-allocate	7.563s
-*/
-
-/*
-1.20
-
-goos: linux
-goarch: amd64
-pkg: github.com/thanhpp/gopher/cmd/bench-json-allocate
-cpu: AMD Ryzen 5 5600G with Radeon Graphics
-BenchmarkJSONiterNonAllocate
-BenchmarkJSONiterNonAllocate-12    	 1212568	       988.3 ns/op	     920 B/op	      18 allocs/op
-BenchmarkJSONiterAllocate
-BenchmarkJSONiterAllocate-12       	 1208973	       999.4 ns/op	     920 B/op	      18 allocs/op
-BenchmarkJSONNonAllocate
-BenchmarkJSONNonAllocate-12        	  344893	      2979 ns/op	    1080 B/op	      17 allocs/op
-BenchmarkJSONAllocate
-BenchmarkJSONAllocate-12           	  376743	      3074 ns/op	    1080 B/op	      17 allocs/op
-PASS
-ok  	github.com/thanhpp/gopher/cmd/bench-json-allocate	6.670s
+ok  	github.com/thanhpp/gopher/cmd/bench-json-allocate	4.333s
 */
