@@ -30,37 +30,32 @@ var (
 }`
 )
 
-func BenchmarkJSONiterNonAllocate(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		var s StaticExtra
-		jsoniter.ConfigDefault.UnmarshalFromString(data, &s)
-	}
-}
+// func BenchmarkJSONiterNonAllocate(b *testing.B) {
+// 	json := jsoniter.ConfigDefault
+// 	for i := 0; i < b.N; i++ {
+// 		var s StaticExtra
+// 		json.UnmarshalFromString(data, &s)
+// 	}
+// }
 
 func BenchmarkJSONiterAllocate(b *testing.B) {
+	json := jsoniter.ConfigDefault
 	for i := 0; i < b.N; i++ {
 		s := new(StaticExtra)
-		jsoniter.ConfigDefault.UnmarshalFromString(data, s)
+		json.UnmarshalFromString(data, s)
 	}
 }
 
-func BenchmarkJSONNonAllocate(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		var s StaticExtra
-		json.Unmarshal([]byte(data), &s)
-	}
-}
+// func BenchmarkJSONNonAllocate(b *testing.B) {
+// 	for i := 0; i < b.N; i++ {
+// 		var s StaticExtra
+// 		json.Unmarshal([]byte(data), &s)
+// 	}
+// }
 
 func BenchmarkJSONAllocate(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		s := new(StaticExtra)
-		json.Unmarshal([]byte(data), s)
-	}
-}
-
-func BenchmarkJSONNil(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		var s = &StaticExtra{}
 		json.Unmarshal([]byte(data), s)
 	}
 }
