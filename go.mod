@@ -13,10 +13,12 @@ require (
 	github.com/gocolly/colly/v2 v2.1.0
 	github.com/joho/godotenv v1.4.0
 	github.com/json-iterator/go v1.1.12
+	github.com/mailru/easyjson v0.7.7
 	github.com/redis/go-redis/v9 v9.0.3
 	github.com/sourcegraph/conc v0.1.0
 	github.com/spf13/viper v1.14.0
 	github.com/stretchr/testify v1.8.1
+	github.com/valyala/fastjson v1.6.4
 	go.uber.org/zap v1.23.0
 	golang.org/x/exp v0.0.0-20220426173459-3bcf042a4bf5
 	golang.org/x/oauth2 v0.0.0-20221014153046-6fdb5e3db783
@@ -60,7 +62,6 @@ require (
 	github.com/kennygrant/sanitize v1.2.4 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/magiconair/properties v1.8.6 // indirect
-	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
