@@ -92,7 +92,9 @@ func BenchmarkSimpleCache(b *testing.B) {
 			}
 		})
 		wg.Go(func() {
-			sc.Get(search...)
+			for i := range search {
+				sc.Get(search[i])
+			}
 		})
 
 		wg.Wait()
@@ -192,13 +194,13 @@ goarch: amd64
 pkg: github.com/thanhpp/gopher/cmd/bench-concurrent-map
 cpu: 11th Gen Intel(R) Core(TM) i7-1185G7 @ 3.00GHz
 BenchmarkSimpleCache
-BenchmarkSimpleCache-8   	     560	   2205724 ns/op	 3502153 B/op	   10306 allocs/op
+BenchmarkSimpleCache-8   	     273	   4333008 ns/op	 3370748 B/op	   16665 allocs/op
 BenchmarkConcMapv2
-BenchmarkConcMapv2-8     	     688	   1797573 ns/op	 1403708 B/op	    5395 allocs/op
+BenchmarkConcMapv2-8     	     682	   1747859 ns/op	 1403749 B/op	    5395 allocs/op
 BenchmarkConcMapv1
-BenchmarkConcMapv1-8     	     650	   1897113 ns/op	 2409501 B/op	   10464 allocs/op
+BenchmarkConcMapv1-8     	     626	   1824240 ns/op	 2409027 B/op	   10463 allocs/op
 BenchmarkGoCache
-BenchmarkGoCache-8       	     411	   3001368 ns/op	 2546848 B/op	   10118 allocs/op
+BenchmarkGoCache-8       	     409	   2959459 ns/op	 2546614 B/op	   10117 allocs/op
 PASS
-ok  	github.com/thanhpp/gopher/cmd/bench-concurrent-map	11.856s
+ok  	github.com/thanhpp/gopher/cmd/bench-concurrent-map	11.790s
 */
