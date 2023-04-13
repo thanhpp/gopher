@@ -32,7 +32,9 @@ func genData() []A {
 
 func BenchmarkNonGenericStableSort(b *testing.B) {
 	for i := 0; i < b.N; i++ {
+		b.StopTimer()
 		data := genData()
+		b.StartTimer()
 		sort.SliceStable(data, func(i, j int) bool {
 			return data[i].I < data[j].I
 		})
@@ -41,7 +43,9 @@ func BenchmarkNonGenericStableSort(b *testing.B) {
 
 func BenchmarkNonGenericSort(b *testing.B) {
 	for i := 0; i < b.N; i++ {
+		b.StopTimer()
 		data := genData()
+		b.StartTimer()
 		sort.Slice(data, func(i, j int) bool {
 			return data[i].I < data[j].I
 		})
@@ -50,7 +54,9 @@ func BenchmarkNonGenericSort(b *testing.B) {
 
 func BenchmarkGenericStableSort(b *testing.B) {
 	for i := 0; i < b.N; i++ {
+		b.StopTimer()
 		data := genData()
+		b.StartTimer()
 		slices.SortStableFunc(data, func(a, b A) bool {
 			return a.I < b.I
 		})
@@ -59,7 +65,9 @@ func BenchmarkGenericStableSort(b *testing.B) {
 
 func BenchmarkGenericSort(b *testing.B) {
 	for i := 0; i < b.N; i++ {
+		b.StopTimer()
 		data := genData()
+		b.StartTimer()
 		slices.SortFunc(data, func(a, b A) bool {
 			return a.I < b.I
 		})
@@ -67,6 +75,27 @@ func BenchmarkGenericSort(b *testing.B) {
 }
 
 /*
+- add stop/start timer
+
+goos: linux
+goarch: amd64
+pkg: github.com/thanhpp/gopher/cmd/bench-generic-sort
+cpu: AMD Ryzen 5 5600G with Radeon Graphics
+BenchmarkNonGenericStableSort
+BenchmarkNonGenericStableSort-12    	     520	   2907970 ns/op	      56 B/op	       2 allocs/op
+BenchmarkNonGenericSort
+BenchmarkNonGenericSort-12          	    1161	   1596522 ns/op	      56 B/op	       2 allocs/op
+BenchmarkGenericStableSort
+BenchmarkGenericStableSort-12       	     625	   1944742 ns/op	       0 B/op	       0 allocs/op
+BenchmarkGenericSort
+BenchmarkGenericSort-12             	    1442	   1406962 ns/op	       0 B/op	       0 allocs/op
+PASS
+ok  	github.com/thanhpp/gopher/cmd/bench-generic-sort	8.268s
+*/
+
+/*
+- same rand seed
+
 goos: linux
 goarch: amd64
 pkg: github.com/thanhpp/gopher/cmd/bench-generic-sort
