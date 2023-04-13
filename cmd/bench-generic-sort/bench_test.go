@@ -17,6 +17,8 @@ var (
 )
 
 func genData() []A {
+	rand.Seed(102034)
+
 	sliceA := make([]A, n)
 
 	for i := 0; i < n; i++ {
@@ -28,7 +30,7 @@ func genData() []A {
 	return sliceA
 }
 
-func BenchmarkNonGenericSort(b *testing.B) {
+func BenchmarkNonGenericStableSort(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		data := genData()
 		sort.SliceStable(data, func(i, j int) bool {
@@ -37,7 +39,16 @@ func BenchmarkNonGenericSort(b *testing.B) {
 	}
 }
 
-func BenchmarkGenericSort(b *testing.B) {
+func BenchmarkNonGenericSort(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		data := genData()
+		sort.Slice(data, func(i, j int) bool {
+			return data[i].I < data[j].I
+		})
+	}
+}
+
+func BenchmarkGenericStableSort(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		data := genData()
 		slices.SortStableFunc(data, func(a, b A) bool {
@@ -45,6 +56,49 @@ func BenchmarkGenericSort(b *testing.B) {
 		})
 	}
 }
+
+func BenchmarkGenericSort(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		data := genData()
+		slices.SortFunc(data, func(a, b A) bool {
+			return a.I < b.I
+		})
+	}
+}
+
+/*
+goos: linux
+goarch: amd64
+pkg: github.com/thanhpp/gopher/cmd/bench-generic-sort
+cpu: AMD Ryzen 5 5600G with Radeon Graphics
+BenchmarkNonGenericStableSort
+BenchmarkNonGenericStableSort-12    	     555	   2299454 ns/op	  507963 B/op	       6 allocs/op
+BenchmarkNonGenericSort
+BenchmarkNonGenericSort-12          	    1020	   1262832 ns/op	  507963 B/op	       6 allocs/op
+BenchmarkGenericStableSort
+BenchmarkGenericStableSort-12       	     729	   1895796 ns/op	  507907 B/op	       4 allocs/op
+BenchmarkGenericSort
+BenchmarkGenericSort-12             	    1042	   1050101 ns/op	  507907 B/op	       4 allocs/op
+PASS
+ok  	github.com/thanhpp/gopher/cmd/bench-generic-sort	5.664s
+*/
+
+/*
+goos: linux
+goarch: amd64
+pkg: github.com/thanhpp/gopher/cmd/bench-generic-sort
+cpu: AMD Ryzen 5 5600G with Radeon Graphics
+BenchmarkNonGenericStableSort
+BenchmarkNonGenericStableSort-12    	     565	   2561965 ns/op	  507961 B/op	       6 allocs/op
+BenchmarkNonGenericSort
+BenchmarkNonGenericSort-12          	     819	   1429645 ns/op	  507961 B/op	       6 allocs/op
+BenchmarkGenericStableSort
+BenchmarkGenericStableSort-12       	     532	   2109854 ns/op	  507905 B/op	       4 allocs/op
+BenchmarkGenericSort
+BenchmarkGenericSort-12             	     930	   1231374 ns/op	  507905 B/op	       4 allocs/op
+PASS
+ok  	github.com/thanhpp/gopher/cmd/bench-generic-sort	5.614s
+*/
 
 /*
 goos: linux

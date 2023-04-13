@@ -14,11 +14,12 @@ require (
 	github.com/joho/godotenv v1.4.0
 	github.com/json-iterator/go v1.1.12
 	github.com/mailru/easyjson v0.7.7
+	github.com/orcaman/concurrent-map/v2 v2.0.1
+	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/redis/go-redis/v9 v9.0.3
 	github.com/sourcegraph/conc v0.1.0
 	github.com/spf13/viper v1.14.0
 	github.com/stretchr/testify v1.8.1
-	github.com/valyala/fastjson v1.6.4
 	go.uber.org/zap v1.23.0
 	golang.org/x/exp v0.0.0-20220426173459-3bcf042a4bf5
 	golang.org/x/oauth2 v0.0.0-20221014153046-6fdb5e3db783
