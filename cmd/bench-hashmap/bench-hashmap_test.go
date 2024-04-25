@@ -58,12 +58,16 @@ func BenchmarkSliceString(b *testing.B) {
 		for i := 0; i < size; i++ {
 			s[i] = strconv.Itoa(i)
 		}
+		finds := make([]string, 0, 10_000)
+		for i := 0; i < 10_000; i++ {
+			finds = append(finds, strconv.Itoa(rand.Intn(size)))
+		}
+
 		b.ResetTimer()
 		b.Run(fmt.Sprintf("size_%d", len(s)),
 			func(b *testing.B) {
 				for i := 0; i < b.N; i++ {
-					find := rand.Intn(size)
-					benchSlice(s, strconv.Itoa(find))
+					benchSlice(s, finds[i])
 				}
 			},
 		)
@@ -77,12 +81,16 @@ func BenchmarkMapString(b *testing.B) {
 		for i := 0; i < size; i++ {
 			s[strconv.Itoa(i)] = true
 		}
+		finds := make([]string, 0, 10_000)
+		for i := 0; i < 10_000; i++ {
+			finds = append(finds, strconv.Itoa(rand.Intn(size)))
+		}
+
 		b.ResetTimer()
 		b.Run(fmt.Sprintf("size_%d", len(s)),
 			func(b *testing.B) {
 				for i := 0; i < b.N; i++ {
-					find := rand.Intn(size)
-					benchMap(s, strconv.Itoa(find))
+					benchMap(s, finds[i])
 				}
 			},
 		)
@@ -140,4 +148,45 @@ BenchmarkMapString/size_40-12           39024145                31.18 ns/op     
 BenchmarkMapString/size_50-12           37039489                32.53 ns/op            0 B/op          0 allocs/op
 PASS
 ok      github.com/thanhpp/gopher/bench-hashmap 45.370s
+*/
+
+/*
+go test -bench=. -benchtime=10000x
+goos: linux
+goarch: amd64
+pkg: github.com/thanhpp/gopher/bench-hashmap
+cpu: AMD Ryzen 5 5600G with Radeon Graphics
+BenchmarkSliceInt/size_1-12                10000                10.16 ns/op
+BenchmarkSliceInt/size_5-12                10000                17.88 ns/op
+BenchmarkSliceInt/size_10-12               10000                18.74 ns/op
+BenchmarkSliceInt/size_20-12               10000                20.00 ns/op
+BenchmarkSliceInt/size_30-12               10000                23.17 ns/op
+BenchmarkSliceInt/size_40-12               10000                23.75 ns/op
+BenchmarkSliceInt/size_50-12               10000                24.68 ns/op
+
+BenchmarkMapInt/size_1-12                  10000                11.36 ns/op
+BenchmarkMapInt/size_5-12                  10000                18.35 ns/op
+BenchmarkMapInt/size_10-12                 10000                26.76 ns/op
+BenchmarkMapInt/size_20-12                 10000                27.34 ns/op
+BenchmarkMapInt/size_30-12                 10000                27.49 ns/op
+BenchmarkMapInt/size_40-12                 10000                25.81 ns/op
+BenchmarkMapInt/size_50-12                 10000                26.76 ns/op
+
+BenchmarkSliceString/size_1-12             10000                 3.457 ns/op
+BenchmarkSliceString/size_5-12             10000                12.33 ns/op
+BenchmarkSliceString/size_10-12            10000                25.57 ns/op
+BenchmarkSliceString/size_20-12            10000                25.38 ns/op
+BenchmarkSliceString/size_30-12            10000                35.37 ns/op
+BenchmarkSliceString/size_40-12            10000                47.57 ns/op
+BenchmarkSliceString/size_50-12            10000                62.01 ns/op
+
+BenchmarkMapString/size_1-12               10000                 3.290 ns/op
+BenchmarkMapString/size_5-12               10000                16.71 ns/op
+BenchmarkMapString/size_10-12              10000                18.79 ns/op
+BenchmarkMapString/size_20-12              10000                18.67 ns/op
+BenchmarkMapString/size_30-12              10000                18.97 ns/op
+BenchmarkMapString/size_40-12              10000                20.77 ns/op
+BenchmarkMapString/size_50-12              10000                26.41 ns/op
+PASS
+ok      github.com/thanhpp/gopher/bench-hashmap 0.024s
 */
